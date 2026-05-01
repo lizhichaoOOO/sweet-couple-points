@@ -1,24 +1,44 @@
 <!--pages/bind/bind.wxml-->
-<view class="container">
-  <view class="card">
-    <view class="section-title">我的邀请码</view>
-    <view class="my-code">{{myCode || '------'}}</view>
-    <button class="btn-primary" bindtap="copyCode">复制邀请码</button>
+<view class="page">
+  <view class="sparkles">
+    <text class="sparkle sp1">✦</text>
+    <text class="sparkle sp2">✦</text>
+    <text class="sparkle sp3">✦</text>
+    <text class="sparkle sp4">✦</text>
   </view>
 
-  <view class="card">
-    <view class="section-title">输入对方邀请码</view>
-    <input
-      class="code-input"
-      placeholder="请输入 6 位邀请码"
-      value="{{inputCode}}"
-      bindinput="onCodeInput"
-      maxlength="10"
-    />
-    <button class="btn-primary" bindtap="doBind">确认绑定</button>
+  <view class="title">欢迎来到情侣<view class="br"></view>积分小程序</view>
+
+  <view class="couple-row">
+    <view class="avatar-col">
+      <view class="avatar-ring">
+        <image class="avatar-img" src="/images/avatar-girl.png" mode="aspectFill" />
+      </view>
+      <view class="pill-btn" bindtap="copyCode">
+        <view class="pill-label">分享邀请码</view>
+        <view class="pill-code">{{myCode}}</view>
+      </view>
+    </view>
+
+    <view class="hearts-mid">
+      <text class="mid-heart h1">♥</text>
+      <text class="mid-heart h2">♥</text>
+      <text class="mid-heart h3">♥</text>
+    </view>
+
+    <view class="avatar-col">
+      <view class="avatar-ring">
+        <image class="avatar-img" src="/images/avatar-boy.png" mode="aspectFill" />
+      </view>
+      <view class="pill-btn" bindtap="scan">
+        <view class="pill-label">扫码绑定</view>
+      </view>
+    </view>
   </view>
 
-  <view class="tip text-muted">
-    绑定后双方的积分将互相可见，绑定关系一旦建立不能随意解除。
+  <view class="deco-hearts">
+    <text class="deco h-lg">♥</text>
+    <text class="deco h-sm">♥</text>
+    <text class="deco h-md">♥</text>
   </view>
 </view>

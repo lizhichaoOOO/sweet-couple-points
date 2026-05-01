@@ -1,49 +1,69 @@
 <!--pages/index/index.wxml-->
-<view class="container">
-  <view wx:if="{{!bound}}" class="card empty">
-    <view class="empty-title">还没有绑定 TA 哦</view>
-    <view class="empty-desc">绑定后才能开始你们的积分故事</view>
-    <button class="btn-primary" bindtap="goBind">去绑定</button>
-  </view>
+<view class="page">
+  <block wx:if="{{!bound}}">
+    <view class="empty-wrap">
+      <view class="empty-title">还没有绑定 TA 哦</view>
+      <view class="empty-desc text-muted">绑定后才能开始你们的积分故事</view>
+      <button class="btn-primary" bindtap="goBind">去绑定</button>
+    </view>
+  </block>
 
   <block wx:else>
-    <view class="card couple-card">
-      <view class="couple-row">
-        <view class="avatar-box">
-          <image class="avatar" src="{{myInfo.avatar || '/images/avatar-default.png'}}" />
-          <view class="name">{{myInfo.nickname}}</view>
-          <view class="points">{{myInfo.points}} 分</view>
-        </view>
-        <view class="heart">♥</view>
-        <view class="avatar-box">
-          <image class="avatar" src="{{partnerInfo.avatar || '/images/avatar-default.png'}}" />
-          <view class="name">{{partnerInfo.nickname}}</view>
-          <view class="points">{{partnerInfo.points}} 分</view>
+    <!-- 情侣头像 + 爱心连接 -->
+    <view class="couple-section">
+      <view class="avatar-box left">
+        <view class="avatar-circle">
+          <image class="avatar-img" src="{{myInfo.avatar || '/images/avatar-boy.png'}}" mode="aspectFill" />
         </view>
       </view>
-      <view class="days">在一起 {{daysToghter}} 天</view>
+
+      <view class="heart-line">
+        <view class="heart small">♥</view>
+        <view class="heart">♥</view>
+        <view class="heart small">♥</view>
+      </view>
+
+      <view class="avatar-box right">
+        <view class="avatar-circle">
+          <image class="avatar-img" src="{{partnerInfo.avatar || '/images/avatar-girl.png'}}" mode="aspectFill" />
+        </view>
+      </view>
     </view>
 
-    <view class="card quick-actions">
-      <view class="section-title">快捷操作</view>
-      <view class="actions-grid">
-        <view class="action-item" bindtap="goBind">
-          <view class="action-icon">★</view>
-          <view class="action-label">加分</view>
-        </view>
-        <view class="action-item">
-          <view class="action-icon">☆</view>
-          <view class="action-label">扣分</view>
-        </view>
-        <view class="action-item">
-          <view class="action-icon">♥</view>
-          <view class="action-label">送礼</view>
-        </view>
-        <view class="action-item">
-          <view class="action-icon">!</view>
-          <view class="action-label">惩罚</view>
-        </view>
+    <!-- 双方积分 -->
+    <view class="points-section">
+      <view class="points-col">
+        <view class="points-num">{{myInfo.points}}<text class="points-unit">分</text></view>
       </view>
+      <view class="points-col">
+        <view class="points-num">{{partnerInfo.points}}<text class="points-unit">分</text></view>
+      </view>
+    </view>
+
+    <view class="days-tag">在一起 {{daysToghter}} 天</view>
+
+    <!-- 今日任务 -->
+    <view class="task-list">
+      <view
+        wx:for="{{todayTasks}}"
+        wx:key="id"
+        class="task-pill {{item.done ? 'done' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="toggleTask"
+      >
+        <view class="task-check">
+          <text wx:if="{{item.done}}" class="check-icon">✓</text>
+          <text wx:else class="check-icon-empty">○</text>
+        </view>
+        <text class="task-text">{{item.title}}</text>
+      </view>
+    </view>
+
+    <!-- 底部加分/扣分 -->
+    <view class="action-bar">
+      <view class="action-half plus" bindtap="addPoints">加分</view>
+      <view class="action-divider"></view>
+      <view class="action-half minus" bindtap="deductPoints">扣分</view>
     </view>
   </block>
 </view>

@@ -1,22 +1,27 @@
 <!--pages/shop/shop.wxml-->
-<view class="container">
-  <view class="card balance">
-    <view class="balance-label">我的积分</view>
-    <view class="balance-value">{{myPoints}}</view>
+<view class="page">
+  <!-- Hero 推荐 -->
+  <view class="hero-card">
+    <view class="hero-img">
+      <text class="hero-emoji">{{hero.image}}</text>
+    </view>
+    <view class="hero-info">
+      <view class="hero-title">{{hero.title}}</view>
+      <view class="hero-price">{{hero.price}}积分</view>
+      <view class="hero-btn" data-id="{{hero.id}}" bindtap="redeem">立即兑换</view>
+    </view>
   </view>
 
-  <view wx:if="{{items.length === 0}}" class="empty-tip">
-    商店还没有奖励，去个人中心添加吧
-  </view>
-
-  <view wx:for="{{items}}" wx:key="id" class="card shop-item">
-    <view class="item-info">
+  <!-- 2 列网格 -->
+  <view class="grid">
+    <view wx:for="{{items}}" wx:key="id" class="grid-item" data-id="{{item.id}}" bindtap="redeem">
+      <view class="item-image">
+        <text class="item-emoji">{{item.image}}</text>
+      </view>
       <view class="item-title">{{item.title}}</view>
-      <view class="item-desc">{{item.desc}}</view>
-    </view>
-    <view class="item-actions">
-      <view class="item-price">{{item.price}} 分</view>
-      <button class="btn-primary btn-small" data-id="{{item.id}}" bindtap="redeem">兑换</button>
+      <view class="item-price-pill">{{item.price}}积分</view>
     </view>
   </view>
+
+  <button class="custom-btn" bindtap="custom">自定义奖励</button>
 </view>

@@ -1,44 +1,56 @@
 <!--pages/profile/profile.wxml-->
-<view class="container">
-  <view class="card user-card">
-    <image class="avatar" src="{{userInfo.avatarUrl || '/images/avatar-default.png'}}" />
-    <view class="user-info">
-      <view class="nickname">{{userInfo.nickName || '未登录'}}</view>
-      <view class="text-muted">{{bound ? '已绑定' : '未绑定'}}</view>
+<view class="page">
+  <!-- 合照区 -->
+  <view class="photo-card">
+    <image
+      class="photo"
+      src="{{photoUrl || '/images/couple-default.png'}}"
+      mode="aspectFill"
+    />
+    <view class="names-row">
+      <text class="name">{{myName}}</text>
+      <text class="name-divider"></text>
+      <text class="name">{{partnerName}}</text>
+      <view class="days-chip">在一起{{daysTogether}}天</view>
     </view>
   </view>
 
-  <view class="menu card">
-    <view class="menu-item" bindtap="goBind">
-      <text>情侣绑定</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goAnniversary">
-      <text>纪念日</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goMood">
-      <text>心情打卡</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goMessages">
-      <text>留言板</text>
-      <text class="arrow">›</text>
+  <!-- 统计 -->
+  <view class="stats-card">
+    <view class="stats-title">统计</view>
+    <view class="stats-row">
+      <view class="stat-item">
+        <view class="stat-label">累计获得</view>
+        <view class="stat-value">{{stats.totalPoints}}<text class="stat-unit">积分</text></view>
+        <view class="stat-icon">💗</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-label">完成任务</view>
+        <view class="stat-value">{{stats.completedTasks}}<text class="stat-unit">项</text></view>
+        <view class="stat-icon">☑️</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-label">兑换奖励</view>
+        <view class="stat-value">{{stats.redeemedRewards}}<text class="stat-unit">份</text></view>
+        <view class="stat-icon">🎁</view>
+      </view>
     </view>
   </view>
 
-  <view class="menu card">
-    <view class="menu-item">
-      <text>任务管理</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item">
-      <text>奖励管理</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item">
-      <text>关于</text>
-      <text class="arrow">›</text>
+  <!-- 菜单 -->
+  <view class="menu-card">
+    <view
+      wx:for="{{menus}}"
+      wx:key="label"
+      class="menu-item"
+      data-url="{{item.url}}"
+      bindtap="tapMenu"
+    >
+      <text class="menu-icon">{{item.icon}}</text>
+      <text class="menu-label">{{item.label}}</text>
+      <text class="menu-arrow">›</text>
     </view>
   </view>
+
+  <button class="logout-btn" bindtap="logout">退出登录</button>
 </view>

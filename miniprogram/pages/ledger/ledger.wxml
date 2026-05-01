@@ -1,0 +1,46 @@
+<!--pages/ledger/ledger.wxml-->
+<view class="page">
+  <view class="tabs">
+    <view
+      class="tab {{filter === 'all' ? 'active' : ''}}"
+      data-filter="all"
+      bindtap="switchFilter"
+    >全部</view>
+    <view
+      class="tab {{filter === 'add' ? 'active' : ''}}"
+      data-filter="add"
+      bindtap="switchFilter"
+    >添加</view>
+    <view
+      class="tab {{filter === 'deduct' ? 'active' : ''}}"
+      data-filter="deduct"
+      bindtap="switchFilter"
+    >扣除</view>
+  </view>
+
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="" value="{{keyword}}" bindinput="onInput" />
+    <text class="search-arrow">⌄</text>
+  </view>
+
+  <view class="records">
+    <view wx:for="{{records}}" wx:key="id" class="record">
+      <view class="rec-main">
+        <view class="rec-title">{{item.title}}</view>
+        <view class="rec-time">{{item.time}}</view>
+      </view>
+      <view wx:if="{{item.type === 'add'}}" class="rec-delta plus">
+        <view class="delta-num">+{{item.delta}}</view>
+        <view class="delta-label">积分增加</view>
+      </view>
+      <view wx:elif="{{item.type === 'deduct'}}" class="rec-delta minus">
+        <view class="delta-num">{{item.delta}}</view>
+        <view class="delta-label">积分扣除</view>
+      </view>
+      <view wx:else class="rec-by">
+        {{item.actor}}
+      </view>
+    </view>
+  </view>
+</view>

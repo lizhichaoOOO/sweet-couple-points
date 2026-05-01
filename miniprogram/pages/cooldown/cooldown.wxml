@@ -1,0 +1,49 @@
+<!--pages/cooldown/cooldown.wxml-->
+<view class="page">
+  <view class="badge">
+    积分扣除<view class="sp"></view>已暂停
+  </view>
+
+  <view class="title">情侣积分<view class="tsp"></view>冷静模式</view>
+
+  <view class="content">
+    <!-- 左头像 -->
+    <view class="side-avatar left">
+      <image class="side-img" src="/images/avatar-girl.png" mode="aspectFill" />
+      <view class="side-status">她:冷静中</view>
+    </view>
+
+    <!-- 中央计时器 -->
+    <view class="timer-ring">
+      <view class="timer-marks">
+        <view wx:for="{{[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47]}}"
+              wx:key="*this"
+              class="mark"
+              style="transform: rotate({{item * 7.5}}deg) translateY(-220rpx)">
+        </view>
+      </view>
+      <view class="timer-pointer"></view>
+      <view class="timer-inner">
+        <view class="timer-label">倒计时:</view>
+        <view class="timer-num">{{countdown}}</view>
+      </view>
+    </view>
+
+    <!-- 右头像 -->
+    <view class="side-avatar right">
+      <image class="side-img" src="/images/avatar-boy.png" mode="aspectFill" />
+      <view class="side-status">他:冷静中</view>
+    </view>
+  </view>
+
+  <view class="btn-row">
+    <button class="cd-btn extend" bindtap="extend">延长冷静时间</button>
+    <button class="cd-btn end" bindtap="endEarly">提前结束冷静</button>
+  </view>
+
+  <view class="dots">
+    <view class="dot active"></view>
+    <view class="dot"></view>
+    <view class="dot"></view>
+  </view>
+</view>

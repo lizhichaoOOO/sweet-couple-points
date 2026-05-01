@@ -1,25 +1,19 @@
 // pages/bind/bind.js
 Page({
   data: {
-    myCode: '',
-    inputCode: ''
+    myCode: '123456'
   },
-  onLoad() {
-    // TODO: 获取我的邀请码（基于 openid）
-  },
-  onCodeInput(e) {
-    this.setData({ inputCode: e.detail.value })
-  },
+  onLoad() {},
   copyCode() {
-    wx.setClipboardData({ data: this.data.myCode })
+    wx.setClipboardData({
+      data: this.data.myCode,
+      success: () => wx.showToast({ title: '已复制', icon: 'success' })
+    })
   },
-  doBind() {
-    const code = this.data.inputCode.trim()
-    if (!code) {
-      wx.showToast({ title: '请输入对方邀请码', icon: 'none' })
-      return
-    }
-    // TODO: 调云函数完成绑定
-    console.log('bind with', code)
+  scan() {
+    wx.scanCode({
+      success: (res) => console.log('scan', res),
+      fail: () => {}
+    })
   }
 })

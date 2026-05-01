@@ -1,34 +1,150 @@
 /* pages/anniversary/anniversary.wxss */
-.anniversary-item {
-  margin-bottom: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFD1DC 0%, #FFE4EC 60%, #FFF5F7 100%);
+  padding: 60rpx 32rpx 80rpx;
+  box-sizing: border-box;
 }
 
-.anniversary-title {
-  font-weight: 500;
+/* 爱心 Hero */
+.hero {
+  text-align: center;
+  margin-bottom: 48rpx;
+  position: relative;
+  height: 360rpx;
+}
+
+.heart-shape {
+  width: 480rpx;
+  height: 340rpx;
+  background: linear-gradient(135deg, #FFB6CE 0%, #FF8FA8 100%);
+  position: relative;
+  margin: 60rpx auto 0;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16rpx 48rpx rgba(255, 107, 138, 0.3);
+  animation: heartbeat 2.5s ease-in-out infinite;
+}
+
+.heart-shape::before,
+.heart-shape::after {
+  content: '';
+  width: 240rpx;
+  height: 240rpx;
+  position: absolute;
+  top: -120rpx;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.heart-shape::before {
+  left: 30rpx;
+}
+
+.heart-shape::after {
+  right: 30rpx;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.hero-num {
+  font-size: 120rpx;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 4rpx 16rpx rgba(255, 107, 138, 0.4);
+}
+
+.hero-label {
+  font-size: 24rpx;
+  color: #fff;
+  margin-top: 12rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.deco-heart {
+  position: absolute;
+  color: #FFB6CE;
+  opacity: 0.6;
+  font-size: 48rpx;
+}
+
+.d1 { top: 40rpx; left: 60rpx; }
+.d2 { top: 80rpx; right: 40rpx; font-size: 56rpx; }
+.d3 { bottom: 0; right: 120rpx; font-size: 40rpx; }
+
+/* 纪念日卡片 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+  margin-bottom: 60rpx;
+}
+
+.card-item {
+  background: linear-gradient(135deg, #FFD9C2, #FFE4EC);
+  border-radius: 32rpx;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 16rpx rgba(255, 107, 138, 0.12);
+}
+
+.card-item.wide {
+  grid-column: 1 / -1;
+}
+
+.card-emoji {
+  font-size: 80rpx;
+  margin-bottom: 12rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text);
   margin-bottom: 8rpx;
 }
 
-.anniversary-days {
-  text-align: right;
-}
-
-.days-num {
-  color: var(--color-primary);
-  font-size: 40rpx;
-  font-weight: 700;
-}
-
-.empty-tip {
-  text-align: center;
+.card-date {
+  font-size: 22rpx;
   color: var(--color-text-muted);
-  padding: 80rpx 0;
+  margin-bottom: 4rpx;
 }
 
-.fab {
-  position: fixed;
-  right: 32rpx;
-  bottom: 48rpx;
+.card-countdown {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+/* 添加按钮 */
+.add-btn {
+  width: 280rpx;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #FF8FA8 0%, #FF6B8A 100%);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  border-radius: 120rpx;
+  padding: 32rpx 0;
+  line-height: 1.2;
+  box-shadow: 0 12rpx 32rpx rgba(255, 107, 138, 0.3);
+  border: none;
+}
+
+.add-btn .sp {
+  display: block;
+  height: 4rpx;
+}
+
+.add-btn::after {
+  border: none;
 }

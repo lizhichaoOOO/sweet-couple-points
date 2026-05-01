@@ -1,13 +1,40 @@
-/* 主题变量 */
+/* 全局设计变量 - 基于《UI设计规范》 */
 page {
-  --color-primary: #FF6B9D;
-  --color-primary-light: #FFB6CE;
-  --color-secondary: #7C9EFF;
+  /* 主色 */
+  --color-primary: #FF6B8A;
+  --color-primary-soft: #FFB0C2;
+  --color-primary-bg: #FFE4EC;
+  --color-secondary: #FFB07C;
+  --color-accent: #C5A3E3;
+
+  /* 中性色 */
   --color-bg: #FFF5F7;
-  --color-text: #333333;
-  --color-text-muted: #999999;
+  --color-card: #FFFFFF;
+  --color-surface: #F5F0F2;
+  --color-text: #2D1B2E;
+  --color-text-muted: #9B8A9E;
   --color-border: #F0E6E9;
-  --color-success: #4CD964;
-  --color-warning: #FFCC00;
-  --color-danger: #FF3B30;
+
+  /* 语义色 */
+  --color-plus: #4ECDC4;
+  --color-minus: #FF6B8A;
+  --color-cooldown: #7B8CDE;
+  --color-warning: #FFB07C;
+
+  /* 圆角 */
+  --radius-card: 32rpx;
+  --radius-button: 48rpx;
+  --radius-input: 24rpx;
+  --radius-modal: 40rpx;
+
+  /* 阴影 */
+  --shadow-card: 0 4rpx 16rpx rgba(45, 27, 46, 0.08);
+  --shadow-pink: 0 8rpx 24rpx rgba(255, 107, 138, 0.2);
+
+  /* 间距 (基础单位 8rpx = 4px) */
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
 }

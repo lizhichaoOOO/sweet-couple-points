@@ -1,17 +1,29 @@
 <!--pages/anniversary/anniversary.wxml-->
-<view class="container">
-  <view wx:if="{{list.length === 0}}" class="empty-tip">
-    还没有纪念日，去添加吧
-  </view>
-  <view wx:for="{{list}}" wx:key="id" class="card anniversary-item">
-    <view class="anniversary-info">
-      <view class="anniversary-title">{{item.title}}</view>
-      <view class="anniversary-date text-muted">{{item.date}}</view>
+<view class="page">
+  <!-- 爱心 Hero -->
+  <view class="hero">
+    <view class="heart-shape">
+      <view class="hero-num">{{totalDays}}</view>
+      <view class="hero-label">我们在一起的总天数</view>
     </view>
-    <view class="anniversary-days">
-      <view class="days-num">{{item.daysText}}</view>
-      <view class="text-muted">{{item.unit}}</view>
+    <view class="deco-heart d1">♥</view>
+    <view class="deco-heart d2">♥</view>
+    <view class="deco-heart d3">♥</view>
+  </view>
+
+  <!-- 纪念日卡片 -->
+  <view class="grid">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="card-item {{item.big ? 'wide' : ''}}"
+    >
+      <view class="card-emoji">{{item.emoji}}</view>
+      <view class="card-title">{{item.title}}</view>
+      <view class="card-date">{{item.date}}</view>
+      <view class="card-countdown">距离下次{{item.title === '生日倒计时' ? '生日' : '纪念日'}}:{{item.countdown}}天</view>
     </view>
   </view>
-  <button class="btn-primary fab" bindtap="addAnniversary">+ 新增纪念日</button>
+
+  <button class="add-btn" bindtap="addAnniversary">添加新<view class="sp"></view>纪念日</button>
 </view>

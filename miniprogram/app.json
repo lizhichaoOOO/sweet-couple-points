@@ -8,18 +8,23 @@
     "pages/bind/bind",
     "pages/anniversary/anniversary",
     "pages/mood/mood",
-    "pages/messages/messages"
+    "pages/messages/messages",
+    "pages/ledger/ledger",
+    "pages/punishment/punishment",
+    "pages/shared-goal/shared-goal",
+    "pages/lucky-draw/lucky-draw",
+    "pages/cooldown/cooldown"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#FFF5F7",
+    "navigationBarBackgroundColor": "#FFE4EC",
     "navigationBarTitleText": "甜蜜积分",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#FFF5F7"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#FF6B9D",
+    "color": "#9B8A9E",
+    "selectedColor": "#FF6B8A",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [
@@ -37,7 +42,7 @@
       },
       {
         "pagePath": "pages/timeline/timeline",
-        "text": "记录"
+        "text": "时间线"
       },
       {
         "pagePath": "pages/profile/profile",

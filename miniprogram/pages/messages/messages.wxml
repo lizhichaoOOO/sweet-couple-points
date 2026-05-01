@@ -1,25 +1,43 @@
 <!--pages/messages/messages.wxml-->
 <view class="page">
-  <scroll-view class="message-list" scroll-y="true" scroll-into-view="msg-bottom">
-    <view wx:if="{{messages.length === 0}}" class="empty-tip">
-      给 TA 留句话吧
-    </view>
-    <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.mine ? 'mine' : 'partner'}}">
-      <view class="bubble">{{item.content}}</view>
-      <view class="msg-time text-muted">{{item.timeText}}</view>
-    </view>
-    <view id="msg-bottom"></view>
-  </scroll-view>
+  <view class="title">给你的情书</view>
 
-  <view class="input-bar">
-    <input
-      class="msg-input"
-      placeholder="说点什么..."
-      value="{{inputText}}"
-      bindinput="onInput"
-      confirm-type="send"
-      bindconfirm="sendMessage"
-    />
-    <button class="btn-primary btn-small" bindtap="sendMessage">发送</button>
+  <view class="board">
+    <!-- 左上角信封装饰 -->
+    <view class="envelope e1">✉️</view>
+    <view class="envelope e2">✉️</view>
+    <view class="pin p1"></view>
+    <view class="pin p2"></view>
+    <view class="pin p3"></view>
+
+    <!-- 信件卡片 -->
+    <view class="letters">
+      <view
+        wx:for="{{letters}}"
+        wx:key="id"
+        class="letter-card {{'tilt-' + (index % 3)}}"
+      >
+        <view class="letter-head">
+          <view class="letter-avatar"></view>
+          <text class="letter-date">{{item.date}}</text>
+        </view>
+        <view class="letter-body">{{item.content}}</view>
+        <view wx:if="{{item.likes}}" class="letter-foot">
+          <text class="heart-icon">♥</text>
+          <text class="likes">{{item.likes}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 右侧贴纸 -->
+    <view class="sticker-col">
+      <text wx:for="{{stickers}}" wx:key="*this" class="sticker">{{item}}</text>
+      <view class="write-pill" bindtap="writeNew">
+        <text class="pen">✏️</text>
+        <text class="write-label">写新情书</text>
+      </view>
+    </view>
   </view>
+
+  <button class="send-btn" bindtap="send">发送</button>
 </view>

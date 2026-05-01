@@ -1,4 +1,3 @@
-/* app.wxss - 全局样式 */
 @import "/styles/variables.wxss";
 
 page {
@@ -14,26 +13,82 @@ page {
   box-sizing: border-box;
 }
 
+/* 卡片 */
 .card {
-  background: #fff;
-  border-radius: 24rpx;
+  background: var(--color-card);
+  border-radius: var(--radius-card);
   padding: 32rpx;
-  box-shadow: 0 4rpx 20rpx rgba(255, 107, 157, 0.08);
+  box-shadow: var(--shadow-card);
 }
 
+/* 按钮 - 主要 */
 .btn-primary {
-  background: var(--color-primary);
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8FA8 100%);
   color: #fff;
-  border-radius: 999rpx;
-  padding: 20rpx 48rpx;
+  border-radius: var(--radius-button);
+  padding: 24rpx 48rpx;
   font-size: 30rpx;
+  font-weight: 600;
   text-align: center;
   border: none;
+  box-shadow: var(--shadow-pink);
+  line-height: 1;
 }
 
 .btn-primary[disabled] {
-  background: #f0c0d2;
+  background: #F5C5D1;
   color: #fff;
+  box-shadow: none;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+/* 按钮 - 次要（描边） */
+.btn-secondary {
+  background: #fff;
+  color: var(--color-primary);
+  border: 2rpx solid var(--color-primary);
+  border-radius: var(--radius-button);
+  padding: 24rpx 48rpx;
+  font-size: 30rpx;
+  text-align: center;
+  line-height: 1;
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+/* 胶囊 tab */
+.pill {
+  padding: 16rpx 32rpx;
+  border-radius: var(--radius-button);
+  font-size: 26rpx;
+  background: #fff;
+  color: var(--color-primary-soft);
+  box-shadow: var(--shadow-card);
+  display: inline-block;
+  text-align: center;
+}
+
+.pill.active {
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8FA8 100%);
+  color: #fff;
+  box-shadow: var(--shadow-pink);
+}
+
+/* 文字 */
+.title-lg {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.title-md {
+  font-size: 36rpx;
+  font-weight: 600;
 }
 
 .text-muted {
@@ -41,6 +96,15 @@ page {
   font-size: 24rpx;
 }
 
+.text-plus {
+  color: var(--color-plus);
+}
+
+.text-minus {
+  color: var(--color-minus);
+}
+
+/* 布局 */
 .flex-row {
   display: flex;
   align-items: center;
@@ -50,4 +114,40 @@ page {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 浮动按钮 */
+.fab {
+  position: fixed;
+  right: 48rpx;
+  bottom: 48rpx;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8FA8 100%);
+  color: #fff;
+  font-size: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-pink);
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+}
+
+.fab::after {
+  border: none;
+}
+
+/* 页面渐变背景 */
+.gradient-bg {
+  background: linear-gradient(180deg, #FFE4EC 0%, #FFF5F7 40%, #FFF0F3 100%);
+  min-height: 100vh;
 }

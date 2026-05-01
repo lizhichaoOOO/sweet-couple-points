@@ -1,0 +1,29 @@
+<!--pages/shared-goal/shared-goal.wxml-->
+<view class="page">
+  <view class="title">共同目标</view>
+
+  <view class="goal-list">
+    <view wx:for="{{goals}}" wx:key="id" class="goal-card">
+      <view class="goal-illu">
+        <text class="goal-emoji">{{item.image}}</text>
+      </view>
+      <view class="goal-main">
+        <view class="goal-title">{{item.title}}</view>
+        <view class="goal-points">{{item.current}}/{{item.total}}积分</view>
+        <view class="goal-contrib">
+          <view>双方共同贡献{{item.current}}积分</view>
+          <view>你贡献{{item.myContrib}}积分</view>
+          <view>对方贡献{{item.partnerContrib}}积分</view>
+        </view>
+        <view class="progress">
+          <view
+            class="progress-fill"
+            style="width: {{(item.current / item.total) * 100}}%"
+          ></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <button class="add-btn" bindtap="addGoal">添加新的共同目标</button>
+</view>

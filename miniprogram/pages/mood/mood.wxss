@@ -1,43 +1,147 @@
 /* pages/mood/mood.wxss */
-.section-title {
-  font-size: 28rpx;
-  font-weight: 600;
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFDBE3 0%, #FFE4EC 40%, #FFF0F3 100%);
+  padding: 40rpx 32rpx 80rpx;
+  box-sizing: border-box;
+}
+
+/* 双人头像 */
+.today-section {
+  margin-bottom: 40rpx;
+}
+
+.mood-head {
+  display: flex;
+  justify-content: space-around;
+  gap: 24rpx;
   margin-bottom: 24rpx;
+}
+
+.head-col {
+  flex: 1;
+  text-align: center;
+}
+
+.head-avatar {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 40rpx;
+  overflow: hidden;
+  margin: 0 auto 16rpx;
+  background: linear-gradient(135deg, #FFD1DC, #FFE4EC);
+  border: 4rpx solid #fff;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.2);
+}
+
+.head-img {
+  width: 100%;
+  height: 100%;
+}
+
+.head-label {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* 心情选择器 */
+.card-soft {
+  background: linear-gradient(135deg, #FFF0F3, #FFE4EC);
+  border-radius: 40rpx;
+  padding: 40rpx 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 138, 0.1);
 }
 
 .mood-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24rpx;
+  gap: 32rpx 24rpx;
 }
 
-.mood-item {
-  background: var(--color-bg);
-  border-radius: 16rpx;
-  padding: 32rpx 0;
-  text-align: center;
+.mood-ball {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.12), inset 0 -12rpx 24rpx rgba(0, 0, 0, 0.1);
   border: 4rpx solid transparent;
 }
 
-.mood-item.active {
-  border-color: var(--color-primary);
+.mood-ball.active {
+  border-color: #FF6B8A;
+  transform: scale(1.08);
 }
 
-.mood-emoji {
-  font-size: 56rpx;
+.ball-emoji {
+  font-size: 72rpx;
 }
 
-.card {
+/* 输入 */
+.input-section {
+  background: linear-gradient(135deg, #FFF0F3, #FFE4EC);
+  border-radius: 40rpx;
+  padding: 24rpx 32rpx;
+  margin-bottom: 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 138, 0.1);
+}
+
+.input-label {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.msg-input {
+  flex: 1;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 16rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.input-ph {
+  color: var(--color-text-muted);
+  font-size: 26rpx;
+}
+
+/* 一周心情 */
+.week-section {
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  border-radius: 40rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 138, 0.1);
+}
+
+.week-title {
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text);
   margin-bottom: 24rpx;
 }
 
-.history-item {
+.week-track {
   display: flex;
-  justify-content: space-between;
-  padding: 16rpx 0;
-  border-bottom: 2rpx solid var(--color-border);
+  justify-content: space-around;
+  align-items: center;
 }
 
-.history-item:last-child {
-  border-bottom: none;
+.week-item {
+  text-align: center;
+}
+
+.week-mood {
+  font-size: 56rpx;
+  margin-bottom: 8rpx;
+}
+
+.week-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
 }

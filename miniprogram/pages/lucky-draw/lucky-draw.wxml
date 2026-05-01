@@ -1,0 +1,45 @@
+<!--pages/lucky-draw/lucky-draw.wxml-->
+<view class="page">
+  <view class="head">
+    <text class="head-subtitle">俩伙点点</text>
+    <view class="head-title">秘秘幸运盒</view>
+  </view>
+
+  <view class="box-wrap">
+    <view class="wheel">
+      <view class="gift-box">
+        <text class="gift-emoji">🎁</text>
+      </view>
+    </view>
+    <view class="sparkle-deco s1">✦</view>
+    <view class="sparkle-deco s2">✦</view>
+    <view class="sparkle-deco s3">✦</view>
+  </view>
+
+  <button class="draw-btn" bindtap="draw">Draw once 20pts</button>
+
+  <view class="card-row">
+    <view class="mini-card c1">♥</view>
+    <view class="mini-card c2">♠</view>
+    <view class="mini-card c3">♦</view>
+    <view class="mini-card c4">♣</view>
+  </view>
+
+  <view class="pool-title">• 品品池预区 •</view>
+
+  <view class="pool-grid">
+    <view wx:for="{{pool}}" wx:key="rarity" class="pool-card" style="background: {{item.color}}">
+      <view class="stars">
+        <text wx:if="{{item.rarity === 'common'}}">⭐</text>
+        <block wx:elif="{{item.rarity === 'rare'}}">
+          <text>⭐</text><text>⭐</text>
+        </block>
+        <block wx:else>
+          <text>⭐</text><text>⭐</text><text>⭐</text>
+        </block>
+      </view>
+      <view class="pool-icon">{{item.icon}}</view>
+      <view class="pool-rarity">{{item.rarity}}</view>
+    </view>
+  </view>
+</view>

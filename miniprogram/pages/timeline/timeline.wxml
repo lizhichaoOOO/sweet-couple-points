@@ -1,19 +1,24 @@
 <!--pages/timeline/timeline.wxml-->
-<view class="container">
-  <view wx:if="{{records.length === 0}}" class="empty-tip">
-    还没有记录，开始你们的故事吧
-  </view>
-  <view wx:for="{{records}}" wx:key="id" class="record">
-    <view class="record-dot {{item.delta > 0 ? 'plus' : 'minus'}}"></view>
-    <view class="record-content card">
-      <view class="record-head">
-        <view class="record-actor">{{item.actor}}</view>
-        <view class="record-delta {{item.delta > 0 ? 'plus' : 'minus'}}">
-          {{item.delta > 0 ? '+' : ''}}{{item.delta}}
+<view class="page">
+  <view class="title-lg page-title">积分时间轴</view>
+
+  <view class="timeline">
+    <view class="center-line"></view>
+    <view wx:for="{{records}}" wx:key="id" class="row">
+      <view class="left-card">
+        <text class="left-icon">{{item.icon}}</text>
+        <view class="left-meta">
+          <view class="time">{{item.time}}</view>
+          <view class="date">{{item.date}}</view>
         </view>
       </view>
-      <view class="record-reason">{{item.reason}}</view>
-      <view class="record-time text-muted">{{item.timeText}}</view>
+
+      <view class="dot"></view>
+
+      <view class="right-card">
+        <view class="right-title">{{item.title}}</view>
+        <view class="right-delta">{{item.delta}}</view>
+      </view>
     </view>
   </view>
 </view>

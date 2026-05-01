@@ -1,0 +1,123 @@
+/* pages/ledger/ledger.wxss */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFC1CE 0%, #FFE4EC 40%, #FFF0F3 100%);
+  padding: 40rpx 32rpx 80rpx;
+  box-sizing: border-box;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 32rpx;
+}
+
+.tab {
+  flex: 1;
+  background: #fff;
+  border-radius: 60rpx;
+  padding: 24rpx 0;
+  text-align: center;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--color-primary-soft);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 138, 0.15);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #FFB0C2 0%, #FFB6CE 100%);
+  color: var(--color-primary);
+  box-shadow: 0 8rpx 20rpx rgba(255, 107, 138, 0.25);
+}
+
+/* 搜索栏 */
+.search-bar {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 60rpx;
+  padding: 20rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.search-icon {
+  font-size: 36rpx;
+  color: var(--color-text-muted);
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+}
+
+.search-arrow {
+  color: var(--color-text-muted);
+  font-size: 32rpx;
+}
+
+/* 记录列表 */
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.record {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 138, 0.08);
+}
+
+.rec-main {
+  flex: 1;
+}
+
+.rec-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6rpx;
+}
+
+.rec-time {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.rec-delta {
+  text-align: right;
+}
+
+.delta-num {
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.rec-delta.plus .delta-num {
+  color: #2CB878;
+}
+
+.rec-delta.minus .delta-num {
+  color: #FF3B5C;
+}
+
+.delta-label {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}
+
+.rec-by {
+  background: #FFE4EC;
+  color: var(--color-primary);
+  font-size: 30rpx;
+  font-weight: 700;
+  padding: 14rpx 28rpx;
+  border-radius: 40rpx;
+}

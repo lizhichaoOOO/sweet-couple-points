@@ -1,0 +1,49 @@
+<!--pages/punishment/punishment.wxml-->
+<view class="page">
+  <view class="title">情侣积分小程序<view class="sp"></view>惩罚池页面</view>
+
+  <view class="content-row">
+    <!-- 左侧危险区 -->
+    <view class="danger-label">
+      <view class="danger-tag">危险区</view>
+      <view class="danger-big">危<view class="dsp"></view>险<view class="dsp"></view>区</view>
+      <view class="danger-desc">积分低于阈值触发惩罚</view>
+    </view>
+
+    <!-- 右侧等级 -->
+    <view class="levels-col">
+      <view class="level-row">
+        <view wx:for="{{levels}}" wx:key="level" class="level-circle {{item.level}}">
+        </view>
+      </view>
+      <view class="level-names">
+        <text wx:for="{{levels}}" wx:key="level" class="level-name">{{item.name}}{{item.level === 'severe' ? '惩罚' : ''}}</text>
+      </view>
+
+      <!-- 惩罚内容图标 -->
+      <view class="punish-icons">
+        <view wx:for="{{levels}}" wx:key="level" class="punish-item">
+          <view class="punish-icon">{{item.icon}}</view>
+        </view>
+      </view>
+      <view class="punish-labels">
+        <text wx:for="{{levels}}" wx:key="level" class="punish-label">{{item.punishment}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 进度条 -->
+  <view class="progress-wrap">
+    <view class="progress-bar">
+      <view class="progress-fill"></view>
+    </view>
+    <view class="progress-label">距离下一级惩罚还差{{nextLevelGap}}积分</view>
+  </view>
+
+  <!-- 接受惩罚按钮 -->
+  <button class="accept-btn" bindtap="accept">
+    <text class="btn-heart">♥</text>
+    <text>接受惩罚</text>
+    <text class="btn-heart">♥</text>
+  </button>
+</view>

@@ -1,26 +1,59 @@
 <!--pages/mood/mood.wxml-->
-<view class="container">
-  <view class="card">
-    <view class="section-title">今天心情如何？</view>
-    <view class="mood-grid">
-      <view
-        wx:for="{{moods}}"
-        wx:key="*this"
-        class="mood-item {{todayMood === item ? 'active' : ''}}"
-        data-mood="{{item}}"
-        bindtap="pickMood"
-      >
-        <text class="mood-emoji">{{item}}</text>
+<view class="page">
+  <!-- 双方今日心情 -->
+  <view class="today-section">
+    <view class="mood-head">
+      <view class="head-col">
+        <view class="head-avatar">
+          <image class="head-img" src="/images/avatar-girl.png" mode="aspectFill" />
+        </view>
+        <view class="head-label">我的今日心情</view>
+      </view>
+      <view class="head-col">
+        <view class="head-avatar">
+          <image class="head-img" src="/images/avatar-boy.png" mode="aspectFill" />
+        </view>
+        <view class="head-label">TA的今日心情</view>
       </view>
     </view>
   </view>
 
-  <view class="card">
-    <view class="section-title">最近心情</view>
-    <view wx:if="{{history.length === 0}}" class="text-muted">还没有打卡记录</view>
-    <view wx:for="{{history}}" wx:key="date" class="history-item">
-      <text class="history-date">{{item.date}}</text>
-      <text class="history-mood">{{item.mood}}</text>
+  <!-- 心情选择器 -->
+  <view class="mood-picker card-soft">
+    <view class="mood-grid">
+      <view
+        wx:for="{{moods}}"
+        wx:key="key"
+        class="mood-ball {{myMood === item.emoji ? 'active' : ''}}"
+        style="background: {{item.color}}"
+        data-mood="{{item.emoji}}"
+        bindtap="pickMood"
+      >
+        <text class="ball-emoji">{{item.emoji}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 留言输入 -->
+  <view class="input-section">
+    <view class="input-label">想对TA说点什么</view>
+    <input
+      class="msg-input"
+      placeholder="输入你的心里话"
+      placeholder-class="input-ph"
+      value="{{input}}"
+      bindinput="onInput"
+    />
+  </view>
+
+  <!-- 一周心情历区 -->
+  <view class="week-section">
+    <view class="week-title">一周心情历区</view>
+    <view class="week-track">
+      <view wx:for="{{weekTrack}}" wx:key="day" class="week-item">
+        <view class="week-mood">{{item.mood}}</view>
+        <view class="week-label">{{item.day}}</view>
+      </view>
     </view>
   </view>
 </view>
