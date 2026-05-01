@@ -1,0 +1,26 @@
+<!--pages/mood/mood.wxml-->
+<view class="container">
+  <view class="card">
+    <view class="section-title">今天心情如何？</view>
+    <view class="mood-grid">
+      <view
+        wx:for="{{moods}}"
+        wx:key="*this"
+        class="mood-item {{todayMood === item ? 'active' : ''}}"
+        data-mood="{{item}}"
+        bindtap="pickMood"
+      >
+        <text class="mood-emoji">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">最近心情</view>
+    <view wx:if="{{history.length === 0}}" class="text-muted">还没有打卡记录</view>
+    <view wx:for="{{history}}" wx:key="date" class="history-item">
+      <text class="history-date">{{item.date}}</text>
+      <text class="history-mood">{{item.mood}}</text>
+    </view>
+  </view>
+</view>

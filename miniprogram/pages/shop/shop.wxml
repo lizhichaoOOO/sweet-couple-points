@@ -1,0 +1,22 @@
+<!--pages/shop/shop.wxml-->
+<view class="container">
+  <view class="card balance">
+    <view class="balance-label">我的积分</view>
+    <view class="balance-value">{{myPoints}}</view>
+  </view>
+
+  <view wx:if="{{items.length === 0}}" class="empty-tip">
+    商店还没有奖励，去个人中心添加吧
+  </view>
+
+  <view wx:for="{{items}}" wx:key="id" class="card shop-item">
+    <view class="item-info">
+      <view class="item-title">{{item.title}}</view>
+      <view class="item-desc">{{item.desc}}</view>
+    </view>
+    <view class="item-actions">
+      <view class="item-price">{{item.price}} 分</view>
+      <button class="btn-primary btn-small" data-id="{{item.id}}" bindtap="redeem">兑换</button>
+    </view>
+  </view>
+</view>

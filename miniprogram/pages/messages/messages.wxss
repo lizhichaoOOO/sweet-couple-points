@@ -1,0 +1,74 @@
+/* pages/messages/messages.wxss */
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--color-bg);
+}
+
+.message-list {
+  flex: 1;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.empty-tip {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 80rpx 0;
+}
+
+.message-item {
+  margin-bottom: 24rpx;
+  max-width: 70%;
+}
+
+.message-item.mine {
+  margin-left: auto;
+  text-align: right;
+}
+
+.message-item.partner {
+  margin-right: auto;
+}
+
+.bubble {
+  display: inline-block;
+  padding: 20rpx 24rpx;
+  border-radius: 20rpx;
+  background: #fff;
+  text-align: left;
+  word-break: break-all;
+}
+
+.message-item.mine .bubble {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.msg-time {
+  font-size: 22rpx;
+  margin-top: 6rpx;
+}
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-top: 2rpx solid var(--color-border);
+  gap: 16rpx;
+}
+
+.msg-input {
+  flex: 1;
+  background: var(--color-bg);
+  border-radius: 999rpx;
+  padding: 16rpx 24rpx;
+  font-size: 28rpx;
+}
+
+.btn-small {
+  font-size: 26rpx;
+  padding: 12rpx 28rpx;
+}

@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tasks/tasks",
+    "pages/shop/shop",
+    "pages/timeline/timeline",
+    "pages/profile/profile",
+    "pages/bind/bind",
+    "pages/anniversary/anniversary",
+    "pages/mood/mood",
+    "pages/messages/messages"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFF5F7",
+    "navigationBarTitleText": "甜蜜积分",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFF5F7"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#FF6B9D",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/tasks/tasks",
+        "text": "任务"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "text": "商店"
+      },
+      {
+        "pagePath": "pages/timeline/timeline",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "../sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,25 @@
+<!--pages/messages/messages.wxml-->
+<view class="page">
+  <scroll-view class="message-list" scroll-y="true" scroll-into-view="msg-bottom">
+    <view wx:if="{{messages.length === 0}}" class="empty-tip">
+      给 TA 留句话吧
+    </view>
+    <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.mine ? 'mine' : 'partner'}}">
+      <view class="bubble">{{item.content}}</view>
+      <view class="msg-time text-muted">{{item.timeText}}</view>
+    </view>
+    <view id="msg-bottom"></view>
+  </scroll-view>
+
+  <view class="input-bar">
+    <input
+      class="msg-input"
+      placeholder="说点什么..."
+      value="{{inputText}}"
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="sendMessage"
+    />
+    <button class="btn-primary btn-small" bindtap="sendMessage">发送</button>
+  </view>
+</view>

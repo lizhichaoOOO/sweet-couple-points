@@ -1,0 +1,43 @@
+/* pages/mood/mood.wxss */
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+}
+
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24rpx;
+}
+
+.mood-item {
+  background: var(--color-bg);
+  border-radius: 16rpx;
+  padding: 32rpx 0;
+  text-align: center;
+  border: 4rpx solid transparent;
+}
+
+.mood-item.active {
+  border-color: var(--color-primary);
+}
+
+.mood-emoji {
+  font-size: 56rpx;
+}
+
+.card {
+  margin-bottom: 24rpx;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}

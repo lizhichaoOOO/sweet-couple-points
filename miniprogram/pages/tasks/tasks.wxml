@@ -1,0 +1,22 @@
+<!--pages/tasks/tasks.wxml-->
+<view class="container">
+  <view class="tabs">
+    <view class="tab {{activeTab === 'daily' ? 'active' : ''}}" data-tab="daily" bindtap="switchTab">日常</view>
+    <view class="tab {{activeTab === 'weekly' ? 'active' : ''}}" data-tab="weekly" bindtap="switchTab">周期</view>
+    <view class="tab {{activeTab === 'custom' ? 'active' : ''}}" data-tab="custom" bindtap="switchTab">自定义</view>
+  </view>
+
+  <view wx:if="{{tasks.length === 0}}" class="empty-tip">
+    暂无任务，去添加一个吧
+  </view>
+
+  <view wx:for="{{tasks}}" wx:key="id" class="card task-item">
+    <view class="task-info">
+      <view class="task-title">{{item.title}}</view>
+      <view class="task-points">+{{item.points}} 分</view>
+    </view>
+    <button class="btn-primary btn-small" data-id="{{item.id}}" bindtap="completeTask">完成</button>
+  </view>
+
+  <button wx:if="{{activeTab === 'custom'}}" class="btn-primary fab" bindtap="addCustomTask">+ 新建任务</button>
+</view>

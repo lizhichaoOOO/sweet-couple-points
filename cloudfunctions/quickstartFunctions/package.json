@@ -1,0 +1,9 @@
+{
+  "name": "quickstartFunctions",
+  "version": "1.0.0",
+  "description": "业务云函数集合",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

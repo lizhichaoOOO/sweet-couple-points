@@ -1,0 +1,93 @@
+/* pages/index/index.wxss */
+.empty {
+  text-align: center;
+  padding: 80rpx 32rpx;
+}
+
+.empty-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  color: var(--color-text-muted);
+  margin-bottom: 48rpx;
+}
+
+.couple-card {
+  margin-bottom: 24rpx;
+}
+
+.couple-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.avatar-box {
+  text-align: center;
+  flex: 1;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: #eee;
+}
+
+.name {
+  margin-top: 12rpx;
+  font-weight: 500;
+}
+
+.points {
+  color: var(--color-primary);
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.heart {
+  font-size: 64rpx;
+  color: var(--color-primary);
+}
+
+.days {
+  text-align: center;
+  margin-top: 24rpx;
+  color: var(--color-text-muted);
+  font-size: 24rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20rpx;
+}
+
+.action-item {
+  text-align: center;
+}
+
+.action-icon {
+  width: 96rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  margin: 0 auto 12rpx;
+  background: var(--color-primary-light);
+  color: #fff;
+  border-radius: 24rpx;
+  font-size: 40rpx;
+}
+
+.action-label {
+  font-size: 24rpx;
+  color: var(--color-text);
+}

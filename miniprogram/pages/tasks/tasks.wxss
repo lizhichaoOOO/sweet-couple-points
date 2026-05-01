@@ -1,0 +1,60 @@
+/* pages/tasks/tasks.wxss */
+.tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx;
+  border-radius: 12rpx;
+  color: var(--color-text-muted);
+}
+
+.tab.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-title {
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.task-points {
+  color: var(--color-primary);
+  font-size: 24rpx;
+}
+
+.btn-small {
+  font-size: 24rpx;
+  padding: 12rpx 24rpx;
+}
+
+.empty-tip {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 80rpx 0;
+}
+
+.fab {
+  position: fixed;
+  right: 32rpx;
+  bottom: 48rpx;
+  z-index: 10;
+}

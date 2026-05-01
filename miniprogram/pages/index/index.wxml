@@ -1,0 +1,49 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view wx:if="{{!bound}}" class="card empty">
+    <view class="empty-title">还没有绑定 TA 哦</view>
+    <view class="empty-desc">绑定后才能开始你们的积分故事</view>
+    <button class="btn-primary" bindtap="goBind">去绑定</button>
+  </view>
+
+  <block wx:else>
+    <view class="card couple-card">
+      <view class="couple-row">
+        <view class="avatar-box">
+          <image class="avatar" src="{{myInfo.avatar || '/images/avatar-default.png'}}" />
+          <view class="name">{{myInfo.nickname}}</view>
+          <view class="points">{{myInfo.points}} 分</view>
+        </view>
+        <view class="heart">♥</view>
+        <view class="avatar-box">
+          <image class="avatar" src="{{partnerInfo.avatar || '/images/avatar-default.png'}}" />
+          <view class="name">{{partnerInfo.nickname}}</view>
+          <view class="points">{{partnerInfo.points}} 分</view>
+        </view>
+      </view>
+      <view class="days">在一起 {{daysToghter}} 天</view>
+    </view>
+
+    <view class="card quick-actions">
+      <view class="section-title">快捷操作</view>
+      <view class="actions-grid">
+        <view class="action-item" bindtap="goBind">
+          <view class="action-icon">★</view>
+          <view class="action-label">加分</view>
+        </view>
+        <view class="action-item">
+          <view class="action-icon">☆</view>
+          <view class="action-label">扣分</view>
+        </view>
+        <view class="action-item">
+          <view class="action-icon">♥</view>
+          <view class="action-label">送礼</view>
+        </view>
+        <view class="action-item">
+          <view class="action-icon">!</view>
+          <view class="action-label">惩罚</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

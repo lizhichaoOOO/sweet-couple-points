@@ -1,0 +1,19 @@
+<!--pages/timeline/timeline.wxml-->
+<view class="container">
+  <view wx:if="{{records.length === 0}}" class="empty-tip">
+    还没有记录，开始你们的故事吧
+  </view>
+  <view wx:for="{{records}}" wx:key="id" class="record">
+    <view class="record-dot {{item.delta > 0 ? 'plus' : 'minus'}}"></view>
+    <view class="record-content card">
+      <view class="record-head">
+        <view class="record-actor">{{item.actor}}</view>
+        <view class="record-delta {{item.delta > 0 ? 'plus' : 'minus'}}">
+          {{item.delta > 0 ? '+' : ''}}{{item.delta}}
+        </view>
+      </view>
+      <view class="record-reason">{{item.reason}}</view>
+      <view class="record-time text-muted">{{item.timeText}}</view>
+    </view>
+  </view>
+</view>

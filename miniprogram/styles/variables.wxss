@@ -1,0 +1,13 @@
+/* 主题变量 */
+page {
+  --color-primary: #FF6B9D;
+  --color-primary-light: #FFB6CE;
+  --color-secondary: #7C9EFF;
+  --color-bg: #FFF5F7;
+  --color-text: #333333;
+  --color-text-muted: #999999;
+  --color-border: #F0E6E9;
+  --color-success: #4CD964;
+  --color-warning: #FFCC00;
+  --color-danger: #FF3B30;
+}

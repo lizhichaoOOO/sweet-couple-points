@@ -1,0 +1,24 @@
+<!--pages/bind/bind.wxml-->
+<view class="container">
+  <view class="card">
+    <view class="section-title">我的邀请码</view>
+    <view class="my-code">{{myCode || '------'}}</view>
+    <button class="btn-primary" bindtap="copyCode">复制邀请码</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">输入对方邀请码</view>
+    <input
+      class="code-input"
+      placeholder="请输入 6 位邀请码"
+      value="{{inputCode}}"
+      bindinput="onCodeInput"
+      maxlength="10"
+    />
+    <button class="btn-primary" bindtap="doBind">确认绑定</button>
+  </view>
+
+  <view class="tip text-muted">
+    绑定后双方的积分将互相可见，绑定关系一旦建立不能随意解除。
+  </view>
+</view>
