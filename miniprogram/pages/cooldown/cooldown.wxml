@@ -9,7 +9,9 @@
   <view class="content">
     <!-- 左头像 -->
     <view class="side-avatar left">
-      <image class="side-img" src="/images/avatar-girl.png" mode="aspectFill" />
+      <view class="side-img side-placeholder">
+        <text class="side-emoji">👧</text>
+      </view>
       <view class="side-status">她:冷静中</view>
     </view>
 
@@ -31,7 +33,9 @@
 
     <!-- 右头像 -->
     <view class="side-avatar right">
-      <image class="side-img" src="/images/avatar-boy.png" mode="aspectFill" />
+      <view class="side-img side-placeholder">
+        <text class="side-emoji">👦</text>
+      </view>
       <view class="side-status">他:冷静中</view>
     </view>
   </view>

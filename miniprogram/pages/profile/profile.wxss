@@ -20,6 +20,17 @@
   margin-bottom: 24rpx;
 }
 
+.photo-placeholder {
+  background: linear-gradient(135deg, #FFD1DC, #FFE4EC);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-emoji {
+  font-size: 180rpx;
+}
+
 .names-row {
   display: flex;
   align-items: center;

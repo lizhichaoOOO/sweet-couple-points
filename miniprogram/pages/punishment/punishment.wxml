@@ -35,7 +35,7 @@
   <!-- 进度条 -->
   <view class="progress-wrap">
     <view class="progress-bar">
-      <view class="progress-fill"></view>
+      <view class="progress-fill" style="width: {{progressPercent}}%"></view>
     </view>
     <view class="progress-label">距离下一级惩罚还差{{nextLevelGap}}积分</view>
   </view>

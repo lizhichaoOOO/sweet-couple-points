@@ -3,6 +3,7 @@ Page({
   data: {
     currentPoints: -20,
     nextLevelGap: 10,
+    progressPercent: 67,
     levels: [
       { level: 'light', name: '轻度', threshold: -30, icon: '🍜', punishment: '洗碗三天' },
       { level: 'medium', name: '中度', threshold: -60, icon: '🧹', punishment: '拖地一周' },

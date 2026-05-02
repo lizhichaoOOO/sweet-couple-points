@@ -73,7 +73,17 @@
   width: 280rpx;
   height: 380rpx;
   border-radius: 32rpx;
-  object-fit: cover;
+}
+
+.side-placeholder {
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-emoji {
+  font-size: 160rpx;
 }
 
 .side-avatar.left .side-img {

@@ -21,7 +21,7 @@
       <view class="card-emoji">{{item.emoji}}</view>
       <view class="card-title">{{item.title}}</view>
       <view class="card-date">{{item.date}}</view>
-      <view class="card-countdown">距离下次{{item.title === '生日倒计时' ? '生日' : '纪念日'}}:{{item.countdown}}天</view>
+      <view class="card-countdown">距离下次{{item.nextLabel}}:{{item.countdown}}天</view>
     </view>
   </view>
 

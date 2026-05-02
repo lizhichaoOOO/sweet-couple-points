@@ -13,7 +13,8 @@
     <view class="couple-section">
       <view class="avatar-box left">
         <view class="avatar-circle">
-          <image class="avatar-img" src="{{myInfo.avatar || '/images/avatar-boy.png'}}" mode="aspectFill" />
+          <image wx:if="{{myInfo.avatar}}" class="avatar-img" src="{{myInfo.avatar}}" mode="aspectFill" />
+          <text wx:else class="avatar-emoji">👦</text>
         </view>
       </view>
 
@@ -25,7 +26,8 @@
 
       <view class="avatar-box right">
         <view class="avatar-circle">
-          <image class="avatar-img" src="{{partnerInfo.avatar || '/images/avatar-girl.png'}}" mode="aspectFill" />
+          <image wx:if="{{partnerInfo.avatar}}" class="avatar-img" src="{{partnerInfo.avatar}}" mode="aspectFill" />
+          <text wx:else class="avatar-emoji">👧</text>
         </view>
       </view>
     </view>
@@ -40,7 +42,7 @@
       </view>
     </view>
 
-    <view class="days-tag">在一起 {{daysToghter}} 天</view>
+    <view class="days-tag">在一起 {{daysTogether}} 天</view>
 
     <!-- 今日任务 -->
     <view class="task-list">

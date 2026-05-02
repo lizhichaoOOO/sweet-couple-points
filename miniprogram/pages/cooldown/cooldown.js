@@ -3,28 +3,40 @@ Page({
   data: {
     countdown: '15:00',
     remainSec: 900,
-    timer: null,
     mineCalm: true,
     partnerCalm: true
   },
+
+  // 不放进 data：setInterval ID 不需要渲染，放 this 上避免每秒触发多余 setData
+  _timer: null,
+
   onShow() {
     this.startTimer()
   },
   onHide() {
-    if (this.data.timer) clearInterval(this.data.timer)
+    this.stopTimer()
+  },
+  onUnload() {
+    this.stopTimer()
   },
   startTimer() {
-    const timer = setInterval(() => {
+    this.stopTimer()
+    this._timer = setInterval(() => {
       let s = this.data.remainSec - 1
       if (s <= 0) {
-        clearInterval(timer)
         s = 0
+        this.stopTimer()
       }
       const mm = String(Math.floor(s / 60)).padStart(2, '0')
       const ss = String(s % 60).padStart(2, '0')
       this.setData({ remainSec: s, countdown: `${mm}:${ss}` })
     }, 1000)
-    this.setData({ timer })
+  },
+  stopTimer() {
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = null
+    }
   },
   extend() {
     this.setData({ remainSec: this.data.remainSec + 600 })

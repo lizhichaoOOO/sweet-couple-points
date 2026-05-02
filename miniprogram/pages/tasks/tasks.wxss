@@ -2,7 +2,7 @@
 .page {
   min-height: 100vh;
   background: #FFF9E8;
-  padding: 40rpx 32rpx 160rpx;
+  padding: 40rpx 32rpx 220rpx;
   box-sizing: border-box;
 }
 
@@ -122,7 +122,7 @@
 .fab {
   position: fixed;
   right: 48rpx;
-  bottom: 60rpx;
+  bottom: calc(env(safe-area-inset-bottom) + 160rpx);
   width: 120rpx;
   height: 120rpx;
   border-radius: 50%;

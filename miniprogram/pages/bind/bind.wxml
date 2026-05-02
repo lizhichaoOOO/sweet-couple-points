@@ -12,7 +12,7 @@
   <view class="couple-row">
     <view class="avatar-col">
       <view class="avatar-ring">
-        <image class="avatar-img" src="/images/avatar-girl.png" mode="aspectFill" />
+        <text class="ring-emoji">👧</text>
       </view>
       <view class="pill-btn" bindtap="copyCode">
         <view class="pill-label">分享邀请码</view>
@@ -28,7 +28,7 @@
 
     <view class="avatar-col">
       <view class="avatar-ring">
-        <image class="avatar-img" src="/images/avatar-boy.png" mode="aspectFill" />
+        <text class="ring-emoji">👦</text>
       </view>
       <view class="pill-btn" bindtap="scan">
         <view class="pill-label">扫码绑定</view>

@@ -5,13 +5,13 @@
     <view class="mood-head">
       <view class="head-col">
         <view class="head-avatar">
-          <image class="head-img" src="/images/avatar-girl.png" mode="aspectFill" />
+          <text class="head-emoji">👧</text>
         </view>
         <view class="head-label">我的今日心情</view>
       </view>
       <view class="head-col">
         <view class="head-avatar">
-          <image class="head-img" src="/images/avatar-boy.png" mode="aspectFill" />
+          <text class="head-emoji">👦</text>
         </view>
         <view class="head-label">TA的今日心情</view>
       </view>

@@ -3,10 +3,14 @@
   <!-- 合照区 -->
   <view class="photo-card">
     <image
+      wx:if="{{photoUrl}}"
       class="photo"
-      src="{{photoUrl || '/images/couple-default.png'}}"
+      src="{{photoUrl}}"
       mode="aspectFill"
     />
+    <view wx:else class="photo photo-placeholder">
+      <text class="photo-emoji">👩‍❤️‍👨</text>
+    </view>
     <view class="names-row">
       <text class="name">{{myName}}</text>
       <text class="name-divider"></text>
