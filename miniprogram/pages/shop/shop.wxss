@@ -60,6 +60,13 @@
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
+.points-tag {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 24rpx;
+}
+
 /* 2 列网格 */
 .grid {
   display: grid;

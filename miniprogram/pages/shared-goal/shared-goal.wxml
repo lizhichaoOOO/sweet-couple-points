@@ -2,23 +2,36 @@
 <view class="page">
   <view class="title">共同目标</view>
 
+  <view wx:if="{{!goals.length}}" class="empty-tip text-muted">
+    还没有共同目标，点下面的按钮创建一个吧
+  </view>
+
   <view class="goal-list">
-    <view wx:for="{{goals}}" wx:key="id" class="goal-card">
+    <view
+      wx:for="{{goals}}"
+      wx:key="_id"
+      class="goal-card"
+      data-id="{{item._id}}"
+      bindtap="contribute"
+      bindlongpress="longPressGoal"
+    >
       <view class="goal-illu">
         <text class="goal-emoji">{{item.image}}</text>
       </view>
       <view class="goal-main">
-        <view class="goal-title">{{item.title}}</view>
+        <view class="goal-title">
+          {{item.title}}
+          <text wx:if="{{item.status === 'achieved'}}" class="achieved-tag">已达成</text>
+        </view>
         <view class="goal-points">{{item.current}}/{{item.total}}积分</view>
         <view class="goal-contrib">
-          <view>双方共同贡献{{item.current}}积分</view>
-          <view>你贡献{{item.myContrib}}积分</view>
-          <view>对方贡献{{item.partnerContrib}}积分</view>
+          <view>你贡献 {{item.myContrib}} 积分</view>
+          <view>对方贡献 {{item.partnerContrib}} 积分</view>
         </view>
         <view class="progress">
           <view
             class="progress-fill"
-            style="width: {{(item.current / item.total) * 100}}%"
+            style="width: {{item.percent}}%"
           ></view>
         </view>
       </view>

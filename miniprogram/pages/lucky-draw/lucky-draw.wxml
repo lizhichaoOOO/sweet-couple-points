@@ -6,7 +6,7 @@
   </view>
 
   <view class="box-wrap">
-    <view class="wheel">
+    <view class="wheel {{drawing ? 'spinning' : ''}}">
       <view class="gift-box">
         <text class="gift-emoji">🎁</text>
       </view>
@@ -16,16 +16,13 @@
     <view class="sparkle-deco s3">✦</view>
   </view>
 
-  <button class="draw-btn" bindtap="draw">Draw once 20pts</button>
+  <view class="points-line">我的积分：{{myPoints}}</view>
 
-  <view class="card-row">
-    <view class="mini-card c1">♥</view>
-    <view class="mini-card c2">♠</view>
-    <view class="mini-card c3">♦</view>
-    <view class="mini-card c4">♣</view>
-  </view>
+  <button class="draw-btn" bindtap="draw" disabled="{{drawing || myPoints < 20}}" loading="{{drawing}}">
+    Draw once 20pts
+  </button>
 
-  <view class="pool-title">• 品品池预区 •</view>
+  <view class="pool-title">• 奖品池 •</view>
 
   <view class="pool-grid">
     <view wx:for="{{pool}}" wx:key="rarity" class="pool-card" style="background: {{item.color}}">

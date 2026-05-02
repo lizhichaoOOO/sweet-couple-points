@@ -1,22 +1,24 @@
 <!--pages/shop/shop.wxml-->
 <view class="page">
   <!-- Hero 推荐 -->
-  <view class="hero-card">
+  <view wx:if="{{hero}}" class="hero-card">
     <view class="hero-img">
-      <text class="hero-emoji">{{hero.image}}</text>
+      <text class="hero-emoji">{{hero.icon}}</text>
     </view>
     <view class="hero-info">
       <view class="hero-title">{{hero.title}}</view>
       <view class="hero-price">{{hero.price}}积分</view>
-      <view class="hero-btn" data-id="{{hero.id}}" bindtap="redeem">立即兑换</view>
+      <view class="hero-btn" data-id="{{hero._id}}" bindtap="redeem">立即兑换</view>
     </view>
   </view>
 
+  <view class="points-tag">我的积分：{{myPoints}}</view>
+
   <!-- 2 列网格 -->
   <view class="grid">
-    <view wx:for="{{items}}" wx:key="id" class="grid-item" data-id="{{item.id}}" bindtap="redeem">
+    <view wx:for="{{items}}" wx:key="_id" class="grid-item" data-id="{{item._id}}" bindtap="redeem">
       <view class="item-image">
-        <text class="item-emoji">{{item.image}}</text>
+        <text class="item-emoji">{{item.icon}}</text>
       </view>
       <view class="item-title">{{item.title}}</view>
       <view class="item-price-pill">{{item.price}}积分</view>

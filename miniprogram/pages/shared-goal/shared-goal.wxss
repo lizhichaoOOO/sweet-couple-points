@@ -100,3 +100,18 @@
 .add-btn::after {
   border: none;
 }
+
+.empty-tip {
+  text-align: center;
+  padding: 80rpx 40rpx;
+}
+
+.achieved-tag {
+  background: #4ECDC4;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+  margin-left: 12rpx;
+  vertical-align: middle;
+}

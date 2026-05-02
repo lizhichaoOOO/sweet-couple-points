@@ -10,36 +10,32 @@
       class="tab {{filter === 'add' ? 'active' : ''}}"
       data-filter="add"
       bindtap="switchFilter"
-    >添加</view>
+    >加分</view>
     <view
       class="tab {{filter === 'deduct' ? 'active' : ''}}"
       data-filter="deduct"
       bindtap="switchFilter"
-    >扣除</view>
+    >扣分</view>
   </view>
 
   <view class="search-bar">
     <text class="search-icon">🔍</text>
-    <input class="search-input" placeholder="" value="{{keyword}}" bindinput="onInput" />
-    <text class="search-arrow">⌄</text>
+    <input class="search-input" placeholder="搜索原因" value="{{keyword}}" bindinput="onInput" />
+  </view>
+
+  <view wx:if="{{!records.length}}" class="empty-tip text-muted">
+    {{keyword ? '没有找到匹配的记录' : '暂无记录'}}
   </view>
 
   <view class="records">
-    <view wx:for="{{records}}" wx:key="id" class="record">
+    <view wx:for="{{records}}" wx:key="_id" class="record">
       <view class="rec-main">
         <view class="rec-title">{{item.title}}</view>
         <view class="rec-time">{{item.time}}</view>
       </view>
-      <view wx:if="{{item.type === 'add'}}" class="rec-delta plus">
-        <view class="delta-num">+{{item.delta}}</view>
-        <view class="delta-label">积分增加</view>
-      </view>
-      <view wx:elif="{{item.type === 'deduct'}}" class="rec-delta minus">
-        <view class="delta-num">{{item.delta}}</view>
-        <view class="delta-label">积分扣除</view>
-      </view>
-      <view wx:else class="rec-by">
-        {{item.actor}}
+      <view class="rec-delta {{item.type}}">
+        <view class="delta-num">{{item.delta > 0 ? '+' : ''}}{{item.delta}}</view>
+        <view class="delta-label">{{item.type === 'add' ? '积分增加' : '积分扣除'}}</view>
       </view>
     </view>
   </view>

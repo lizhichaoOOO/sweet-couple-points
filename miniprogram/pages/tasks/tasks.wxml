@@ -13,26 +13,27 @@
   </view>
 
   <view class="task-list">
-    <view wx:if="{{tasks[activeTab].length === 0}}" class="empty-tip text-muted">
-      暂无任务，去添加一个吧
+    <view wx:if="{{!tasks.length}}" class="empty-tip text-muted">
+      {{activeTab === 'custom' ? '暂无自定义任务，点右下角 + 新建一个' : '暂无任务'}}
     </view>
     <view
-      wx:for="{{tasks[activeTab]}}"
-      wx:key="id"
-      class="task-card"
+      wx:for="{{tasks}}"
+      wx:key="_id"
+      class="task-card {{item.done ? 'task-done' : ''}}"
+      data-task="{{item}}"
+      bindtap="completeTask"
+      bindlongpress="longPressTask"
     >
       <view class="icon-wrap">
         <text class="icon">{{item.icon}}</text>
       </view>
       <view class="task-title">{{item.title}}</view>
-      <view class="task-points" wx:if="{{item.points.length}}">
-        <view wx:for="{{item.points}}" wx:for-item="p" wx:key="*this" class="points-badge">+{{p}}</view>
-      </view>
-      <view wx:else class="check-wrap {{item.done ? 'done' : ''}}" data-id="{{item.id}}" bindtap="toggleTask">
+      <view wx:if="{{!item.done}}" class="points-badge">+{{item.points}}</view>
+      <view wx:else class="check-wrap done">
         <text class="check">✓</text>
       </view>
     </view>
   </view>
 
-  <view class="fab" bindtap="addCustom">+</view>
+  <view wx:if="{{activeTab === 'custom'}}" class="fab" bindtap="addCustom">+</view>
 </view>

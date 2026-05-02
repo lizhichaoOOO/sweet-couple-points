@@ -1,6 +1,12 @@
 <!--pages/index/index.wxml-->
 <view class="page">
-  <block wx:if="{{!bound}}">
+  <block wx:if="{{!ready}}">
+    <view class="empty-wrap">
+      <view class="empty-desc text-muted">加载中...</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{!bound}}">
     <view class="empty-wrap">
       <view class="empty-title">还没有绑定 TA 哦</view>
       <view class="empty-desc text-muted">绑定后才能开始你们的积分故事</view>
@@ -13,7 +19,7 @@
     <view class="couple-section">
       <view class="avatar-box left">
         <view class="avatar-circle">
-          <image wx:if="{{myInfo.avatar}}" class="avatar-img" src="{{myInfo.avatar}}" mode="aspectFill" />
+          <image wx:if="{{me.avatar}}" class="avatar-img" src="{{me.avatar}}" mode="aspectFill" />
           <text wx:else class="avatar-emoji">👦</text>
         </view>
       </view>
@@ -26,7 +32,7 @@
 
       <view class="avatar-box right">
         <view class="avatar-circle">
-          <image wx:if="{{partnerInfo.avatar}}" class="avatar-img" src="{{partnerInfo.avatar}}" mode="aspectFill" />
+          <image wx:if="{{partner.avatar}}" class="avatar-img" src="{{partner.avatar}}" mode="aspectFill" />
           <text wx:else class="avatar-emoji">👧</text>
         </view>
       </view>
@@ -35,22 +41,22 @@
     <!-- 双方积分 -->
     <view class="points-section">
       <view class="points-col">
-        <view class="points-num">{{myInfo.points}}<text class="points-unit">分</text></view>
+        <view class="points-num">{{me.points}}<text class="points-unit">分</text></view>
       </view>
       <view class="points-col">
-        <view class="points-num">{{partnerInfo.points}}<text class="points-unit">分</text></view>
+        <view class="points-num">{{partner.points}}<text class="points-unit">分</text></view>
       </view>
     </view>
 
     <view class="days-tag">在一起 {{daysTogether}} 天</view>
 
     <!-- 今日任务 -->
-    <view class="task-list">
+    <view wx:if="{{todayTasks.length}}" class="task-list">
       <view
         wx:for="{{todayTasks}}"
-        wx:key="id"
+        wx:key="_id"
         class="task-pill {{item.done ? 'done' : ''}}"
-        data-id="{{item.id}}"
+        data-task="{{item}}"
         bindtap="toggleTask"
       >
         <view class="task-check">

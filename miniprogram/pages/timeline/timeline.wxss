@@ -105,3 +105,8 @@
   box-shadow: 0 0 0 6rpx rgba(255, 107, 138, 0.2);
   z-index: 1;
 }
+
+.empty-tip {
+  text-align: center;
+  padding: 160rpx 0;
+}

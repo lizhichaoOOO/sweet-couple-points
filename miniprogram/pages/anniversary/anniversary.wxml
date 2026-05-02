@@ -11,12 +11,18 @@
     <view class="deco-heart d3">♥</view>
   </view>
 
+  <view wx:if="{{!list.length}}" class="empty-tip text-muted">
+    还没有纪念日，点下面的按钮添加第一个吧
+  </view>
+
   <!-- 纪念日卡片 -->
   <view class="grid">
     <view
       wx:for="{{list}}"
-      wx:key="id"
+      wx:key="_id"
       class="card-item {{item.big ? 'wide' : ''}}"
+      data-id="{{item._id}}"
+      bindlongpress="longPressItem"
     >
       <view class="card-emoji">{{item.emoji}}</view>
       <view class="card-title">{{item.title}}</view>

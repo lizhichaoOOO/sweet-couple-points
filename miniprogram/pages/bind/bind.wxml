@@ -36,6 +36,21 @@
     </view>
   </view>
 
+  <view class="manual-bind">
+    <view class="manual-label">或输入对方邀请码</view>
+    <view class="manual-row">
+      <input
+        class="manual-input"
+        placeholder="6 位邀请码"
+        placeholder-class="manual-ph"
+        value="{{inputCode}}"
+        bindinput="onInputCode"
+        maxlength="10"
+      />
+      <button class="manual-btn" bindtap="confirmBind" loading="{{loading}}" disabled="{{loading}}">绑定</button>
+    </view>
+  </view>
+
   <view class="deco-hearts">
     <text class="deco h-lg">♥</text>
     <text class="deco h-sm">♥</text>

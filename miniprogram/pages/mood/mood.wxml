@@ -5,13 +5,13 @@
     <view class="mood-head">
       <view class="head-col">
         <view class="head-avatar">
-          <text class="head-emoji">👧</text>
+          <text class="head-emoji">{{myMood || '👧'}}</text>
         </view>
         <view class="head-label">我的今日心情</view>
       </view>
       <view class="head-col">
         <view class="head-avatar">
-          <text class="head-emoji">👦</text>
+          <text class="head-emoji">{{partnerMood || '👦'}}</text>
         </view>
         <view class="head-label">TA的今日心情</view>
       </view>
@@ -42,7 +42,8 @@
       placeholder="输入你的心里话"
       placeholder-class="input-ph"
       value="{{input}}"
-      bindinput="onInput"
+      bindinput="onInputChange"
+      bindblur="saveNote"
     />
   </view>
 
@@ -50,7 +51,7 @@
   <view class="week-section">
     <view class="week-title">一周心情历区</view>
     <view class="week-track">
-      <view wx:for="{{weekTrack}}" wx:key="day" class="week-item">
+      <view wx:for="{{weekTrack}}" wx:key="date" class="week-item">
         <view class="week-mood">{{item.mood}}</view>
         <view class="week-label">{{item.day}}</view>
       </view>

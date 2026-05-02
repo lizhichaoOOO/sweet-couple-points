@@ -121,3 +121,8 @@
   padding: 14rpx 28rpx;
   border-radius: 40rpx;
 }
+
+.empty-tip {
+  text-align: center;
+  padding: 120rpx 0;
+}

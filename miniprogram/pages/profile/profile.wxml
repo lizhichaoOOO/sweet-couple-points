@@ -9,23 +9,25 @@
       mode="aspectFill"
     />
     <view wx:else class="photo photo-placeholder">
-      <text class="photo-emoji">👩‍❤️‍👨</text>
+      <text class="photo-emoji">{{bound ? '👩‍❤️‍👨' : '👤'}}</text>
     </view>
     <view class="names-row">
       <text class="name">{{myName}}</text>
-      <text class="name-divider"></text>
-      <text class="name">{{partnerName}}</text>
-      <view class="days-chip">在一起{{daysTogether}}天</view>
+      <block wx:if="{{bound}}">
+        <text class="name-divider"></text>
+        <text class="name">{{partnerName}}</text>
+        <view class="days-chip">在一起{{daysTogether}}天</view>
+      </block>
     </view>
   </view>
 
-  <!-- 统计 -->
-  <view class="stats-card">
+  <!-- 统计（已绑定才显示）-->
+  <view wx:if="{{bound}}" class="stats-card">
     <view class="stats-title">统计</view>
     <view class="stats-row">
       <view class="stat-item">
-        <view class="stat-label">累计获得</view>
-        <view class="stat-value">{{stats.totalPoints}}<text class="stat-unit">积分</text></view>
+        <view class="stat-label">当前积分</view>
+        <view class="stat-value">{{stats.totalPoints}}<text class="stat-unit">分</text></view>
         <view class="stat-icon">💗</view>
       </view>
       <view class="stat-item">
@@ -56,5 +58,5 @@
     </view>
   </view>
 
-  <button class="logout-btn" bindtap="logout">退出登录</button>
+  <button wx:if="{{bound}}" class="logout-btn" bindtap="logout">解除绑定</button>
 </view>

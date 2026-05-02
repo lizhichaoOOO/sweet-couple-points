@@ -44,6 +44,22 @@
   justify-content: center;
   box-shadow: 0 16rpx 48rpx rgba(255, 143, 63, 0.4), inset 0 -20rpx 40rpx rgba(0, 0, 0, 0.1);
   border: 12rpx solid #FFF5E6;
+  transition: transform 0.6s ease-out;
+}
+
+.wheel.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.points-line {
+  font-size: 26rpx;
+  color: var(--color-text);
+  margin: 24rpx 0;
+  font-weight: 500;
 }
 
 .gift-box {

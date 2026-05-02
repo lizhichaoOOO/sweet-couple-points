@@ -54,6 +54,14 @@
   box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.12);
 }
 
+.task-card.task-done {
+  opacity: 0.55;
+}
+
+.task-card.task-done .task-title {
+  text-decoration: line-through;
+}
+
 .icon-wrap {
   width: 120rpx;
   height: 120rpx;

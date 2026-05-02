@@ -148,3 +148,8 @@
 .add-btn::after {
   border: none;
 }
+
+.empty-tip {
+  text-align: center;
+  padding: 60rpx 40rpx;
+}

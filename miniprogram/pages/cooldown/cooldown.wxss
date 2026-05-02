@@ -219,3 +219,25 @@
   background: #FF6B8A;
   opacity: 1;
 }
+
+/* 没有活跃冷静期 */
+.no-active {
+  text-align: center;
+  padding: 120rpx 32rpx;
+}
+
+.no-active-emoji {
+  font-size: 160rpx;
+  margin-bottom: 32rpx;
+}
+
+.no-active-text {
+  font-size: 30rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 48rpx;
+}
+
+.start-btn {
+  margin: 0 auto;
+  width: 80%;
+}

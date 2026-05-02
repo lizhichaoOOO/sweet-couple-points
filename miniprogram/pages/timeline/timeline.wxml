@@ -2,9 +2,13 @@
 <view class="page">
   <view class="title-lg page-title">积分时间轴</view>
 
+  <view wx:if="{{!records.length && !loading}}" class="empty-tip text-muted">
+    暂无记录，去加个分吧
+  </view>
+
   <view class="timeline">
-    <view class="center-line"></view>
-    <view wx:for="{{records}}" wx:key="id" class="row">
+    <view wx:if="{{records.length}}" class="center-line"></view>
+    <view wx:for="{{records}}" wx:key="_id" class="row">
       <view class="left-card">
         <text class="left-icon">{{item.icon}}</text>
         <view class="left-meta">

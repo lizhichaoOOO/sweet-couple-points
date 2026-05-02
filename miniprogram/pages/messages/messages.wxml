@@ -11,18 +11,24 @@
     <view class="pin p3"></view>
 
     <!-- 信件卡片 -->
+    <view wx:if="{{!letters.length}}" class="empty-tip text-muted">
+      还没有情书，给 TA 写一封吧 →
+    </view>
+
     <view class="letters">
       <view
         wx:for="{{letters}}"
-        wx:key="id"
+        wx:key="_id"
         class="letter-card {{'tilt-' + (index % 3)}}"
+        data-letter="{{item}}"
+        bindlongpress="longPressLetter"
       >
         <view class="letter-head">
-          <view class="letter-avatar"></view>
+          <view class="letter-avatar">{{item.mine ? '🧑' : '💕'}}</view>
           <text class="letter-date">{{item.date}}</text>
         </view>
         <view class="letter-body">{{item.content}}</view>
-        <view wx:if="{{item.likes}}" class="letter-foot">
+        <view class="letter-foot" data-id="{{item._id}}" catchtap="likeLetter">
           <text class="heart-icon">♥</text>
           <text class="likes">{{item.likes}}</text>
         </view>
@@ -39,5 +45,15 @@
     </view>
   </view>
 
-  <button class="send-btn" bindtap="send">发送</button>
+  <view class="send-row">
+    <input
+      class="send-input"
+      placeholder="快速留句话"
+      value="{{input}}"
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="send"
+    />
+    <button class="send-btn" bindtap="send">发送</button>
+  </view>
 </view>
