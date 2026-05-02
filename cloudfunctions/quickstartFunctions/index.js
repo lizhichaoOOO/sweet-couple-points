@@ -19,7 +19,8 @@ const handlers = {
   goals: require('./lib/goals'),
   cooldown: require('./lib/cooldown'),
   punishment: require('./lib/punishment'),
-  luckyDraw: require('./lib/luckyDraw')
+  luckyDraw: require('./lib/luckyDraw'),
+  games: require('./lib/games')
 }
 
 function resolveHandler(action) {

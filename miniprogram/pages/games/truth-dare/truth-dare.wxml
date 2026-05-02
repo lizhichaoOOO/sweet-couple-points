@@ -1,0 +1,81 @@
+<!--pages/games/truth-dare/truth-dare.wxml-->
+<view class="page">
+  <view class="header">
+    <view class="title">真心话 · 大冒险</view>
+    <view class="subtitle">完成 +2 积分，拒绝 -10 积分</view>
+  </view>
+
+  <!-- 难度切换 -->
+  <view class="level-switch">
+    <view
+      class="level-pill {{level === 'mild' ? 'active' : ''}}"
+      data-level="mild"
+      bindtap="switchLevel"
+    >
+      <text class="lv-label">温和</text>
+      <text wx:if="{{stats}}" class="lv-count">{{stats.truths.mild}}+{{stats.dares.mild}}</text>
+    </view>
+    <view
+      class="level-pill spicy {{level === 'spicy' ? 'active' : ''}}"
+      data-level="spicy"
+      bindtap="switchLevel"
+    >
+      <text class="lv-label">进阶 🔥</text>
+      <text wx:if="{{stats}}" class="lv-count">{{stats.truths.spicy}}+{{stats.dares.spicy}}</text>
+    </view>
+  </view>
+
+  <!-- 卡片区 -->
+  <view class="card-wrap">
+    <view class="card {{flipping ? 'flipping' : ''}} {{state === 'showing' ? 'card-showing' : ''}}">
+      <block wx:if="{{state === 'idle'}}">
+        <view class="card-emoji">🎴</view>
+        <view class="card-tip">点下方按钮开始抽题</view>
+        <view class="card-hint">{{level === 'mild' ? '温和模式：日常 / 浪漫向' : '进阶模式：深度 / 当众向'}}</view>
+      </block>
+      <block wx:else>
+        <view class="card-tag {{current.type}}">{{pickedTypeLabel}}</view>
+        <view class="card-text">{{current.text}}</view>
+        <view class="card-id">#{{current.id}}</view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 状态：idle 显示抽题按钮；showing 显示完成/拒绝 -->
+  <view wx:if="{{state === 'idle'}}" class="action-row two">
+    <button class="big-btn truth" bindtap="drawTruth">
+      <text class="btn-emoji">💭</text>
+      <text class="btn-label">真心话</text>
+    </button>
+    <button class="big-btn dare" bindtap="drawDare">
+      <text class="btn-emoji">🎯</text>
+      <text class="btn-label">大冒险</text>
+    </button>
+  </view>
+
+  <view wx:elif="{{state === 'showing' || state === 'submitting'}}" class="action-row stack">
+    <button class="big-btn done" bindtap="submitDone" disabled="{{state === 'submitting'}}">
+      ✓ 我做到了 +2
+    </button>
+    <button class="big-btn reject" bindtap="submitReject" disabled="{{state === 'submitting'}}">
+      ✗ 我拒绝 -10
+    </button>
+    <view class="aux-row">
+      <text class="aux-link" bindtap="reroll">换一题</text>
+      <text class="aux-divider">|</text>
+      <text class="aux-link" bindtap="cancel">取消</text>
+    </view>
+  </view>
+
+  <!-- 今日记录 -->
+  <view class="footer">
+    <view class="stat-item">
+      <text class="stat-num">{{todayDone}}</text>
+      <text class="stat-label">本次完成</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{todayReject}}</text>
+      <text class="stat-label">本次拒绝</text>
+    </view>
+  </view>
+</view>

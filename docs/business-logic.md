@@ -351,32 +351,44 @@
 
 ---
 
-## 🎮 游戏模块（入口占位，待实现）
+## 🎮 游戏模块
 
-**代码路径**：`miniprogram/pages/games/`
+**代码路径**：`miniprogram/pages/games/` + `cloudfunctions/quickstartFunctions/lib/games/`
 
-当前状态：只有入口列表页，点任意一个弹"敬请期待" toast。
+游戏 hub 页面 `pages/games/games` 列出 8 款游戏，点击已实现的跳转，未实现的弹"敬请期待" toast。
 
-**规划中的 8 个双人小游戏**：
+### 已实现：真心话大冒险（3 个 action）
 
-| Key | 名称 | 简介 | 预期积分联动 |
+**代码路径**：`lib/games/truth-dare.js` + `pages/games/truth-dare/`
+
+**题库**（写在云函数代码里，80 条）：
+- 真心话 40 条：温和 20 / 进阶 20
+- 大冒险 40 条：温和 20 / 进阶 20
+- 内容融合朋友圈、微信、短视频、表情包、外卖、求婚等 2025 情侣日常场景
+
+**Action**：
+| Action | 说明 | 输入 | 输出 |
 |---|---|---|---|
-| `truth_dare` | 真心话大冒险 😈 | 随机抽题，必须回答或执行 | 拒绝接受 → 扣分 |
-| `couple_quiz` | 情侣默契测试 💑 | 10 道题看你们有多了解对方 | 按答对率给积分 |
-| `rps` | 石头剪刀布 ✊ | 经典出拳博弈 | 输家扣分 / 赢家加分 |
-| `memory` | 翻牌记忆 🃏 | 记忆爱情瞬间，翻对得积分 | 翻对一对 +5 |
-| `who_knows` | 谁更懂谁 🧐 | 双方同时答同一题，看答案是否一致 | 答案一致双方加分 |
-| `drawing` | 你画我猜 🎨 | 一个画一个猜，增加默契 | 猜对双方加分 |
-| `number_1a2b` | 1A2B 猜数字 🔢 | 经典推理小游戏 | 赢家加分 |
-| `dice_truth` | 骰子惩罚 🎲 | 掷骰子点数对应的惩罚任务 | 点数越小惩罚越重 |
+| `games.truthDare.draw` | 抽题 | `{ type: 'truth' \| 'dare', level: 'mild' \| 'spicy' \| 'random' }` | `{ id, type, level, text, poolSize }` |
+| `games.truthDare.submit` | 提交结果 | `{ id, type, text, result: 'done' \| 'rejected' }` | `{ ok, delta }` |
+| `games.truthDare.stats` | 题库容量 | — | `{ truths, dares, doneReward, rejectPenalty }` |
 
-**入口**：个人中心菜单 `🎮 双人游戏`
+**积分联动**：
+- `result='done'`（完成）：调 `pointsLib.adjust({delta: +2, type: 'game'})` 加 2 分
+- `result='rejected'`（拒绝）：调 `pointsLib.adjust({delta: -10, type: 'game'})` 扣 10 分
+- 拒绝走完整 `points.adjust` 流程 → **冷静期内拒绝也会被拦截**（不能通过游戏来回避惩罚）
+- records 的 reason 形如 `游戏-真心话-完成：第一次看到我你想的第一件事是什么...`，便于账本追溯
 
-**待设计**：
-- 每个游戏的云函数 action（可能按游戏再分子模块）
-- 对战式游戏需要"房间"概念（一方发起、对方加入）
-- 结果与 `points.adjust` 打通，复用冷静期检查机制
-- 记录各游戏历史最高分、胜率等统计
+**前端交互**：
+- 难度 toggle（温和/进阶）+ 大卡片 + 抽题动画（CSS rotateY 翻转）
+- idle 状态：两个按钮"真心话 / 大冒险"
+- showing 状态：完成 / 拒绝 / 换一题 / 取消
+- 本次完成数和拒绝数实时统计
+
+### 待实现的 7 款游戏
+- couple_quiz / rps / memory / who_knows / drawing / number_1a2b / dice_truth
+- 每款游戏对应一个 `lib/games/xxx.js`，遵循 `draw + submit` 模式
+- hub 卡片的 `ready: true` 标记控制是否可以跳转
 
 ---
 - 检查 `wx.cloud` 是否可用（基础库 >= 2.2.3）

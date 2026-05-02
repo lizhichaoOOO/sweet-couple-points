@@ -73,3 +73,9 @@
   border-radius: 24rpx;
   margin-top: 16rpx;
 }
+
+.coming-tag.ready {
+  background: linear-gradient(135deg, #6FE3CC, #4ECDC4);
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(78, 205, 196, 0.3);
+}

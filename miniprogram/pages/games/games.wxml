@@ -17,7 +17,9 @@
       <view class="card-emoji">{{item.emoji}}</view>
       <view class="card-title">{{item.title}}</view>
       <view class="card-desc">{{item.desc}}</view>
-      <view class="coming-tag">敬请期待</view>
+      <view class="coming-tag {{item.ready ? 'ready' : ''}}">
+        {{item.ready ? '可以玩' : '敬请期待'}}
+      </view>
     </view>
   </view>
 </view>

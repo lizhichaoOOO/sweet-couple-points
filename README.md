@@ -573,6 +573,9 @@ const res = await api('points.adjust', { delta: 10, reason: '晚安打卡' })
 | punishment | `punishment.complete` | 对方标记完成 |
 | luckyDraw | `luckyDraw.draw` | 抽奖（消耗 20 积分） |
 | luckyDraw | `luckyDraw.history` | 抽奖历史 |
+| games | `games.truthDare.draw` | 真心话大冒险抽题 |
+| games | `games.truthDare.submit` | 提交结果（完成 +2 / 拒绝 -10） |
+| games | `games.truthDare.stats` | 题库容量统计 |
 
 ---
 

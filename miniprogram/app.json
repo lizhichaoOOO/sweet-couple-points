@@ -14,7 +14,8 @@
     "pages/shared-goal/shared-goal",
     "pages/lucky-draw/lucky-draw",
     "pages/cooldown/cooldown",
-    "pages/games/games"
+    "pages/games/games",
+    "pages/games/truth-dare/truth-dare"
   ],
   "window": {
     "backgroundTextStyle": "light",
