@@ -50,6 +50,7 @@ async function getOrCreateUser(openid) {
       updatedAt: now
     }
   })
+  console.log('[user:auto-created]', { oid: openid.slice(-6), userId: add._id, inviteCode: code })
   const created = await db.collection(COL.users).doc(add._id).get()
   return created.data
 }
@@ -104,6 +105,20 @@ function todayDateStr() {
   return `${y}-${m}-${day}`
 }
 
+// 日志工具：[module.fn] {...}
+function log(tag, data) {
+  console.log(`[${tag}]`, data || '')
+}
+function logWarn(tag, data) {
+  console.warn(`[${tag}]`, data || '')
+}
+function logError(tag, err, data) {
+  console.error(`[${tag}]`, err && err.message, err && err.stack, data || '')
+}
+function shortId(openid) {
+  return openid ? openid.slice(-6) : ''
+}
+
 module.exports = {
   cloud,
   db,
@@ -116,5 +131,9 @@ module.exports = {
   generateUniqueInviteCode,
   isMember,
   startOfTodayISO,
-  todayDateStr
+  todayDateStr,
+  log,
+  logWarn,
+  logError,
+  shortId
 }

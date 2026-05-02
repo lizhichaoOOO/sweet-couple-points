@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/goals.js
 // 共同目标：创建、查询、投入积分
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 const pointsLib = require('./points')
 
 // goals.list
@@ -71,6 +71,15 @@ exports.contribute = async (event, wx) => {
       achievedAt: achieved ? db.serverDate() : undefined,
       updatedAt: db.serverDate()
     }
+  })
+  log(achieved ? 'goals.achieved' : 'goals.contribute', {
+    coupleId,
+    goalId,
+    title: goal.title,
+    oid: shortId(wx.OPENID),
+    amount,
+    current: newCurrent,
+    total: goal.total
   })
   return { success: true, achieved, current: newCurrent, total: goal.total }
 }

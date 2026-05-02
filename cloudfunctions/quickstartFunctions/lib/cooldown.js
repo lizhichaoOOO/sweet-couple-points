@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/cooldown.js
 // 吵架冷静期：任一方发起 → 锁扣分；双方同意才能提前结束
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 
 const DEFAULT_DURATION_MIN = 30
 const MAX_EXTEND_MIN = 120
@@ -32,6 +32,13 @@ exports.start = async (event, wx) => {
       endVoters: [],
       createdAt: db.serverDate()
     }
+  })
+  log('cooldown.start', {
+    coupleId,
+    id: add._id,
+    startedBy: shortId(wx.OPENID),
+    durationMin,
+    endAt: endAt.toISOString()
   })
   return { id: add._id, endAt: endAt.toISOString() }
 }
@@ -120,11 +127,13 @@ exports.requestEnd = async (event, wx) => {
         endVoters: voters
       }
     })
+    log('cooldown.ended', { coupleId, id: cd._id, by: shortId(wx.OPENID) })
     return { ended: true }
   }
 
   await db.collection(COL.cooldowns).doc(cd._id).update({
     data: { endVoters: voters, updatedAt: db.serverDate() }
   })
+  log('cooldown.vote', { coupleId, id: cd._id, by: shortId(wx.OPENID), voters: voters.length })
   return { ended: false, waitingForPartner: true }
 }

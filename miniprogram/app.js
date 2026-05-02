@@ -15,8 +15,9 @@ App({
   ready: null,
 
   onLaunch() {
+    console.log('[bootstrap:launch]')
     if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
+      console.error('[bootstrap:no-cloud] 基础库版本过低')
       wx.showToast({ title: '基础库版本过低', icon: 'none' })
       return
     }
@@ -31,8 +32,9 @@ App({
         traceUser: true
       })
       this.globalData.cloudReady = true
+      console.log('[bootstrap:cloud-init-ok]', { env: this.globalData.env || '(default)' })
     } catch (e) {
-      console.error('wx.cloud.init failed', e)
+      console.error('[bootstrap:cloud-init-fail]', e)
       wx.showToast({ title: '云开发初始化失败', icon: 'none' })
       return
     }
@@ -42,16 +44,22 @@ App({
 
   // 启动流程：login → getProfile → 写入 globalData
   async bootstrap() {
+    console.log('[bootstrap:start]')
     try {
       // 1. 先从缓存取 openid，减少冷启动 RTT
       const cached = wx.getStorageSync('openid')
       if (cached) {
         this.globalData.openid = cached
+        console.log('[bootstrap:openid-cached]', { oid: cached.slice(-6) })
       } else {
         const loginRes = await callFunction('login')
         if (loginRes && loginRes.openid) {
           this.globalData.openid = loginRes.openid
           wx.setStorageSync('openid', loginRes.openid)
+          console.log('[bootstrap:openid-ok]', { oid: loginRes.openid.slice(-6) })
+        } else {
+          console.error('[bootstrap:openid-missing]', loginRes)
+          throw new Error('登录未返回 openid')
         }
       }
 
@@ -60,9 +68,13 @@ App({
       this.globalData.user = profile
       this.globalData.bound = !!profile.bound
       this.globalData.coupleId = profile.coupleId || ''
+      console.log('[bootstrap:profile-ok]', {
+        bound: profile.bound,
+        hasCode: !!profile.inviteCode
+      })
       return profile
     } catch (e) {
-      console.error('bootstrap failed', e)
+      console.error('[bootstrap:fail]', e)
       // 不阻塞页面加载，但提示用户
       if (!this.globalData.env) {
         wx.showModal({
@@ -84,9 +96,10 @@ App({
       this.globalData.user = profile
       this.globalData.bound = !!profile.bound
       this.globalData.coupleId = profile.coupleId || ''
+      console.log('[app:refresh-profile]', { bound: profile.bound })
       return profile
     } catch (e) {
-      console.error('refreshProfile failed', e)
+      console.error('[app:refresh-profile-fail]', e.message)
     }
   }
 })

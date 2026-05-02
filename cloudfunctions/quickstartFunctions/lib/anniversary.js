@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/anniversary.js
 // 纪念日模块：增删查 + 倒计时
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 
 // anniversary.list → 返回纪念日，附加倒计时天数
 exports.list = async (event, wx) => {
@@ -38,6 +38,7 @@ exports.create = async (event, wx) => {
       createdAt: db.serverDate()
     }
   })
+  log('anniversary.create', { coupleId, id: add._id, title: title.trim(), repeat })
   return { id: add._id }
 }
 

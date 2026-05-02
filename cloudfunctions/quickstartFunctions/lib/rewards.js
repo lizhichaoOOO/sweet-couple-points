@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/rewards.js
 // 奖励商店：预设 + 自定义、兑换、履行
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 const pointsLib = require('./points')
 
 const PRESET_REWARDS = [
@@ -61,6 +61,13 @@ exports.redeem = async (event, wx) => {
       createdAt: now
     }
   })
+  log('rewards.redeem', {
+    coupleId,
+    oid: shortId(wx.OPENID),
+    rewardTitle: reward.title,
+    price,
+    redemptionId: add._id
+  })
   return { redemptionId: add._id, pricePaid: price }
 }
 
@@ -86,6 +93,12 @@ exports.fulfill = async (event, wx) => {
       fulfilledAt: db.serverDate(),
       fulfilledBy: wx.OPENID
     }
+  })
+  log('rewards.fulfill', {
+    coupleId,
+    redemptionId,
+    rewardTitle: res.data.rewardTitle,
+    fulfilledBy: shortId(wx.OPENID)
   })
   return { success: true }
 }

@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/luckyDraw.js
 // 幸运盒抽奖：消耗积分 → 按概率返奖品
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 const pointsLib = require('./points')
 
 const COST = 20
@@ -56,6 +56,16 @@ exports.draw = async (event, wx) => {
       wx
     )
   }
+
+  log('luckyDraw.draw', {
+    coupleId,
+    oid: shortId(wx.OPENID),
+    rarity: rarity.rarity,
+    prize: item.name,
+    bonus: item.bonus || 0,
+    cost: COST,
+    drawId: prizeDoc._id
+  })
 
   return {
     id: prizeDoc._id,

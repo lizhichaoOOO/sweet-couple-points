@@ -70,11 +70,35 @@ sweet-couple-points/
 
 打开微信开发者工具 → 导入项目 → 选择本仓库根目录 → AppID 已写入 `project.config.json`
 
-### 3. 开通云开发
+### 3. 开通云开发 + 填入环境 ID
 
-- 在开发者工具左上角点击 "云开发" 按钮
-- 创建环境（首次免费）
-- 记下环境 ID，填入 `miniprogram/app.js` 的 `env` 字段
+**这一步是必做的，否则所有云函数调用都会失败。**
+
+1. 在微信开发者工具窗口左上角点 **"云开发"** 按钮
+2. 首次点击会弹出"开通云开发"向导：
+   - 创建环境（选免费基础版即可）
+   - 起个英文名，例如 `sweet-couple-prod`
+3. 创建成功后，点"环境设置"查看 **环境 ID**（形如 `cloud1-7g123xyzabcdef`）
+4. 复制环境 ID，打开本项目的 `miniprogram/app.js`，找到这一行：
+
+   ```js
+   // TODO: 把云开发环境 ID 填到这里（在开发者工具 → 云开发 面板里创建）
+   // 例：'cloud1-7g123xyzabcdef'
+   this.globalData.env = ''
+   ```
+
+   把 `''` 换成你的环境 ID：
+
+   ```js
+   this.globalData.env = 'cloud1-7g123xyzabcdef'
+   ```
+
+5. 保存文件，重新编译小程序。Console 里能看到 `[bootstrap:openid-ok]` 就说明云开发初始化成功了。
+
+**常见错误**：
+- 启动时弹"需要配置云开发环境"对话框 → env 还没填或写错
+- `wx.cloud has not been init` → env 填了但未保存文件，或基础库版本 < 2.2.3
+- 云函数调用报 `functions not ready` → 云函数还没部署，见步骤 5
 
 ### 4. 建立云数据库集合
 
@@ -84,6 +108,25 @@ sweet-couple-points/
 
 - 右键 `cloudfunctions/login` → 上传并部署：云端安装依赖
 - 右键 `cloudfunctions/quickstartFunctions` → 上传并部署：云端安装依赖
+
+部署完成后小程序首次启动会自动调 `login` 拿 openid，再调 `user.getProfile` 创建用户记录。
+
+---
+
+## 调试日志说明
+
+跑起来后可以在两个地方看日志：
+
+**前端**（微信开发者工具 Console）：
+- `[bootstrap:*]` — app 启动的几个阶段
+- `[api:ok] <action> {ms}` — 每次云函数调用的耗时
+- `[api:err] <action> ...` — 云函数调用失败
+
+**后端**（云开发控制台 → 云函数 → 日志）：
+- `[action:start] <action>` — 每次进入分发器
+- `[action:ok] <action> {ms}` — 成功返回
+- `[action:err] <action> ...` — 业务错误或异常
+- `[points.adjust]`、`[couple.bindByCode]` 等关键业务点还会打 info 日志方便追踪
 
 ---
 

@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/points.js
 // 积分变动模块：加分、扣分、任务奖励（内部用）
-const { db, _, COL, BizError, requireCouple, isMember } = require('./common')
+const { db, _, COL, BizError, requireCouple, isMember, log, logWarn, shortId } = require('./common')
 
 // points.adjust({ delta, reason, targetOpenid?, type? })
 // - delta 正数加分 / 负数扣分
@@ -36,6 +36,10 @@ exports.adjust = async (event, wx) => {
       const active = cdRes.data[0]
       const endTime = new Date(active.endAt).getTime()
       if (endTime > Date.now()) {
+        logWarn('points.adjust:blocked-by-cooldown', {
+          coupleId, oid: shortId(wx.OPENID), delta,
+          remainSec: Math.floor((endTime - Date.now()) / 1000)
+        })
         throw new BizError('冷静期内禁止扣分', 409)
       }
     }
@@ -58,6 +62,16 @@ exports.adjust = async (event, wx) => {
       type: type || (delta > 0 ? 'add' : 'deduct'),
       createdAt: now
     }
+  })
+
+  log('points.adjust', {
+    coupleId,
+    actor: shortId(wx.OPENID),
+    target: shortId(targetOpenid),
+    delta,
+    reason: reason.trim().slice(0, 30),
+    type: type || (delta > 0 ? 'add' : 'deduct'),
+    recordId: recAdd._id
   })
 
   return { success: true, recordId: recAdd._id, delta }

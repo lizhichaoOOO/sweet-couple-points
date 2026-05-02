@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/tasks.js
 // 任务模块：列表、完成、自定义 CRUD
-const { db, _, COL, BizError, requireCouple, startOfTodayISO } = require('./common')
+const { db, _, COL, BizError, requireCouple, startOfTodayISO, log, shortId } = require('./common')
 const pointsLib = require('./points')
 
 // 系统预设任务（coupleId 为空的任务对所有情侣可见）
@@ -103,6 +103,13 @@ exports.complete = async (event, wx) => {
       wx
     )
   }
+  log('tasks.complete', {
+    coupleId,
+    oid: shortId(wx.OPENID),
+    taskId,
+    title: task.title,
+    points
+  })
   return { success: true, pointsEarned: points }
 }
 

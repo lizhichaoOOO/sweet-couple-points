@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/user.js
 // 用户模块：自动登录即创建 + 基本资料维护
-const { db, COL, BizError, getOrCreateUser } = require('./common')
+const { db, COL, BizError, getOrCreateUser, log, shortId } = require('./common')
 
 // user.getProfile → 返回当前用户资料（不存在则创建）
 exports.getProfile = async (event, wx) => {
@@ -29,5 +29,6 @@ exports.updateProfile = async (event, wx) => {
   if (typeof avatar === 'string') data.avatar = avatar
 
   await db.collection(COL.users).doc(user._id).update({ data })
+  log('user.updateProfile', { oid: shortId(wx.OPENID), fields: Object.keys(data) })
   return { success: true }
 }

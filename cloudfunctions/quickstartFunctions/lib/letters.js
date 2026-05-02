@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/letters.js
 // 留言板/情书：发送、列表、点赞
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 
 // letters.send({ content })
 exports.send = async (event, wx) => {
@@ -19,6 +19,7 @@ exports.send = async (event, wx) => {
       createdAt: db.serverDate()
     }
   })
+  log('letters.send', { coupleId, oid: shortId(wx.OPENID), id: add._id, length: trimmed.length })
   return { letterId: add._id }
 }
 

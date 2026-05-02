@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/couple.js
 // 情侣模块：邀请码生成、绑定、查询、解绑
-const { db, _, COL, BizError, getOrCreateUser, requireCouple } = require('./common')
+const { db, _, COL, BizError, getOrCreateUser, requireCouple, log, shortId } = require('./common')
 
 // couple.getInviteCode → 返回自己的邀请码
 exports.getInviteCode = async (event, wx) => {
@@ -45,6 +45,13 @@ exports.bindByCode = async (event, wx) => {
     db.collection(COL.users).doc(me._id).update({ data: { coupleId: coupleAdd._id, updatedAt: now } }),
     db.collection(COL.users).doc(partner._id).update({ data: { coupleId: coupleAdd._id, updatedAt: now } })
   ])
+
+  log('couple.bindByCode', {
+    coupleId: coupleAdd._id,
+    me: shortId(wx.OPENID),
+    partner: shortId(partner._openid),
+    code: code.trim()
+  })
 
   return { coupleId: coupleAdd._id, members }
 }
@@ -95,6 +102,7 @@ exports.unbind = async (event, wx) => {
   await db.collection(COL.users).where({ coupleId }).update({
     data: { coupleId: '', updatedAt: now }
   })
+  log('couple.unbind', { coupleId, by: shortId(wx.OPENID), members: couple.members })
   return { success: true }
 }
 

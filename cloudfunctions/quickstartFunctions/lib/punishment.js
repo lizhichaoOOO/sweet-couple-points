@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/punishment.js
 // 惩罚池：根据积分划等级，触发对应惩罚
-const { db, _, COL, BizError, requireCouple } = require('./common')
+const { db, _, COL, BizError, requireCouple, log, shortId } = require('./common')
 
 const LEVELS = [
   { level: 'light',  name: '轻度', threshold: -30,  content: '洗碗三天',          icon: '🍜' },
@@ -74,6 +74,13 @@ exports.accept = async (event, wx) => {
       createdAt: db.serverDate()
     }
   })
+  log('punishment.accept', {
+    coupleId,
+    oid: shortId(wx.OPENID),
+    level: chosen.level,
+    content: chosen.content,
+    id: add._id
+  })
   return { punishmentId: add._id, content: chosen.content }
 }
 
@@ -96,6 +103,11 @@ exports.complete = async (event, wx) => {
       completedAt: db.serverDate(),
       completedBy: wx.OPENID
     }
+  })
+  log('punishment.complete', {
+    coupleId,
+    id,
+    completedBy: shortId(wx.OPENID)
   })
   return { success: true }
 }

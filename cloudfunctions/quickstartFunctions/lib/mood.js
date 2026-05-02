@@ -1,6 +1,6 @@
 // cloudfunctions/quickstartFunctions/lib/mood.js
 // 心情打卡：每人每日一条，唯一键 (couple, openid, date)
-const { db, _, COL, BizError, requireCouple, todayDateStr } = require('./common')
+const { db, _, COL, BizError, requireCouple, todayDateStr, log, shortId } = require('./common')
 
 // mood.set({ mood, note? }) → upsert 当日心情
 exports.set = async (event, wx) => {
@@ -19,6 +19,7 @@ exports.set = async (event, wx) => {
     await db.collection(COL.moods).doc(exist.data[0]._id).update({
       data: { mood, note, updatedAt: now }
     })
+    log('mood.set:update', { coupleId, oid: shortId(wx.OPENID), mood, date })
     return { success: true, updated: true }
   }
 
@@ -32,6 +33,7 @@ exports.set = async (event, wx) => {
       updatedAt: now
     }
   })
+  log('mood.set:create', { coupleId, oid: shortId(wx.OPENID), mood, date })
   return { success: true, created: true }
 }
 

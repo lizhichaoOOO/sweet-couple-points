@@ -75,14 +75,17 @@ Page({
   async doBind(code) {
     if (this.data.loading) return
     this.setData({ loading: true })
+    console.log('[bind:attempt]', { code })
     try {
-      await apiWithToast('couple.bindByCode', { code }, '绑定中')
+      const res = await apiWithToast('couple.bindByCode', { code }, '绑定中')
+      console.log('[bind:ok]', { coupleId: res.coupleId })
       await app.refreshProfile()
       wx.showToast({ title: '绑定成功', icon: 'success' })
       setTimeout(() => {
         wx.switchTab({ url: '/pages/index/index' })
       }, 800)
     } catch (e) {
+      console.warn('[bind:fail]', { code, msg: e.message })
       // toast 已在 apiWithToast 里弹过
     } finally {
       this.setData({ loading: false })
