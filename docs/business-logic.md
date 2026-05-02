@@ -1,0 +1,405 @@
+# 业务逻辑审查文档
+
+本文档基于源代码逐行审查整理而成，列出项目全部 **50 条独立业务逻辑**，按功能域划分。配合代码阅读、排查 bug、新人上手时使用。
+
+---
+
+## 📑 目录
+
+- [基础设施（3 条）](#-基础设施3-条)
+- [用户资料（2 条）](#-用户资料2-条)
+- [情侣关系（5 条）](#-情侣关系5-条)
+- [首页聚合（1 条）](#-首页1-条)
+- [积分引擎（2 条）](#-积分引擎2-条)
+- [任务系统（5 条）](#-任务系统5-条)
+- [奖励商店（6 条）](#-奖励商店6-条)
+- [纪念日（3 条）](#-纪念日3-条)
+- [心情打卡（3 条）](#-心情打卡3-条)
+- [留言板（4 条）](#-留言板4-条)
+- [共同目标（4 条）](#-共同目标4-条)
+- [冷静期（4 条）](#-冷静期4-条)
+- [惩罚池（3 条）](#️-惩罚池3-条)
+- [幸运盒（2 条）](#-幸运盒2-条)
+- [前端启动链路（3 条）](#-前端启动链路3-条)
+- [统计汇总](#-统计汇总)
+- [隐藏的跨模块耦合](#-隐藏的跨模块耦合很重要)
+
+---
+
+## 🏗 基础设施（3 条）
+
+### 1. 自动登录 + 首次建号
+**代码路径**：`cloudfunctions/login/index.js` + `common.getOrCreateUser`
+- `login` 云函数调 `cloud.getWXContext()` 拿 openid，不落库
+- 第一次调 `user.getProfile` 时在 `users` 集合里插入记录，字段：`_openid / nickname='' / avatar='' / inviteCode / coupleId=''`
+- **关键逻辑**：邀请码生成走 `generateUniqueInviteCode` — 随机 6 位 `100000-999999`，查库比对重复，最多重试 8 次；极端情况下用 `Date.now().slice(-6)` 兜底
+- 前端 `app.bootstrap`：先看 `wx.getStorageSync('openid')`，命中就跳过 login 云函数（减少 RTT）
+
+### 2. 统一鉴权 Middleware
+**代码路径**：`common.requireCouple`
+- 先 `getOrCreateUser` 拿 user 文档
+- 没有 `coupleId` → 抛 `BizError('未绑定情侣', 403)`
+- 按 `coupleId` 查 `couples` 集合，找不到 → 抛 404
+- 返回 `{ user, couple, coupleId, partnerOpenid }` 给 handler 复用
+- **几乎所有 handler 第一行就调它**，前端遇到 403 就引导去绑定页
+
+### 3. 统一错误处理 + 日志
+**代码路径**：`quickstartFunctions/index.js`
+- `BizError` 类带 `code` 字段（400/401/403/404/409 是业务错误、500 是系统错误）
+- Dispatcher 用 `[action:start]` / `[action:ok ms]` / `[action:biz-err]` / `[action:err]` 四级日志
+- openid 统一用后 6 位显示，保护隐私又可关联
+
+---
+
+## 👤 用户资料（2 条）
+
+### 4. `user.getProfile`
+- 返回 `{ openid, nickname, avatar, inviteCode, coupleId, bound }`
+- **特殊点**：`bound = !!coupleId`，前端用来判断是否要显示"去绑定"
+
+### 5. `user.updateProfile`
+- 只允许改 `nickname`（1-30 字符）和 `avatar`（URL 字符串）
+- 其他字段（如 `inviteCode`、`coupleId`）不允许从这里改，保证数据完整性
+
+---
+
+## 💑 情侣关系（5 条）
+
+### 6. `couple.getInviteCode`
+- 返回当前用户的 6 位邀请码；若未绑定就是这个码，已绑定也保留原码
+
+### 7. `couple.bindByCode` — 核心绑定逻辑
+**4 层校验**：
+1. 自己的 `coupleId` 必须为空（409：已绑定过）
+2. 邀请码能在 `users` 集合里查到（404：码无效）
+3. 对方不是自己（400：不能绑自己）
+4. 对方 `coupleId` 必须为空（409：对方已绑）
+
+**原子操作**（用 `Promise.all` 并行但不是真 transaction）：
+- 在 `couples` 集合建新文档，`members = [我, 对方]`，`points = {我: 0, 对方: 0}`，`startDate = 今天`
+- 同时更新两个 `users` 的 `coupleId` 字段
+
+### 8. `couple.getInfo`
+- 并行拉双方 user 文档（取 nickname / avatar）
+- 在一起天数 = `Math.floor((Date.now() - startDate) / 86400000)`
+- 返回结构：`{ me: {openid, nickname, avatar, points}, partner: {...}, daysTogether, startDate }`
+
+### 9. `couple.unbind`
+- 把 `couples` 的 `status` 标为 `dissolved`，写入 `dissolvedAt`
+- `db.collection(users).where({coupleId}).update` 一次清掉双方的 `coupleId`
+- **数据保留不删**：历史记录、任务、奖励等按 coupleId 关联，但查询都会走 `requireCouple`，解绑后自然访问不到
+
+### 10. `couple.setStartDate`
+- 修改在一起的纪念日日期，用 `new Date(startDate)` 解析，验 `isNaN(d.getTime())`
+
+---
+
+## 🏠 首页（1 条）
+
+### 11. `home.get` — 一次拿全首页数据
+- 未绑定：直接返回 `{bound: false}`，不走后面的数据库
+- 已绑定：并行三个查询：
+  - `coupleLib.getInfo` — 情侣资料+积分
+  - `tasksLib.listToday` — 今日任务前 3
+  - 最近 3 条 `records` — 动态流
+- **性能优化**：首页从 4 次 RTT 压缩到 1 次
+
+---
+
+## ⚡ 积分引擎（2 条）
+
+### 12. `points.adjust` — 所有积分变动的唯一入口
+**输入校验**：
+- delta 必须是非零有限数，|delta| ≤ 1000
+- reason 必填且非空
+- targetOpenid 必须是本情侣成员
+
+**核心业务逻辑**（按顺序）：
+1. 获取情侣信息
+2. **如果 delta < 0**：查 `cooldowns` 集合里 `{coupleId, status: 'active'}` 最新一条；若 `endAt > 当前时间` → 抛 409（冷静期禁扣）
+3. 原子自增：`couples.update({data: {[`points.${targetOpenid}`]: _.inc(delta)}})`
+4. 写 records：`{actorOpenid, targetOpenid, delta, reason, type, createdAt}`
+5. 返回 `{recordId, delta}`
+
+**被复用于 4 个上游场景**：任务完成加分 / 奖励兑换扣分 / 目标投入扣分 / 抽奖扣费+红利加分。每次都带 `type` 字段，便于账本区分。
+
+### 13. `records.list` — 记录查询（时间线+账本共用）
+- filter 可选 `all` / `add` / `deduct`，映射到 `where.type`
+- keyword 支持正则搜索 `reason` 字段（用 `db.RegExp` + `escapeRegex` 防注入）
+- 分页：`skip` + `limit`，limit 最大 50
+- 并行返回 `{list, total, hasMore}`
+
+---
+
+## ✅ 任务系统（5 条）
+
+### 14. 预设任务（写在代码里）
+```
+早安 5 / 晚安 5 / 做饭 10 / 洗碗 5 / 倒垃圾 3 / 铺床 3   (daily)
+每周约会 20 / 每周大扫除 15                               (weekly)
+```
+- `_id` 前缀 `preset_` 区分，不存数据库
+
+### 15. `tasks.list({type})`
+- 根据 type 返回 daily / periodic / custom 对应列表
+- **关键逻辑 — 完成状态检测**：
+  - daily 周期起点 = 今天 00:00
+  - weekly 周期起点 = 本周一 00:00（算法：`(day + 6) % 7` 算出到周一的差）
+  - 查 `taskCompletions` 里 `coupleId + _openid + completedAt >= since` 的集合
+  - 返回的任务附加 `done: true/false`
+
+### 16. `tasks.listToday` — 首页专用
+- 并行拉 daily + periodic 两个列表
+- 排序：`done === false` 在前（未完成优先），各自内部按原顺序
+- `slice(0, 3)` 取前 3 条
+
+### 17. `tasks.complete({taskId})` — 完成 + 加分联动
+- 用 `resolveTask(taskId, coupleId)` 解析预设 or 自定义
+- 防重复：查 `taskCompletions` 本周期是否已有记录（409：本周期已完成）
+- 写 `taskCompletions`：`{coupleId, taskId, taskTitle, pointsEarned, completedAt}`
+- 调 `pointsLib.adjust({delta: points, reason: '任务：xxx', type: 'task'})` 加分
+- **冷静期影响**：加分不受阻（delta > 0）
+
+### 18. 自定义任务 CRUD
+- `createCustom`：title 必填，points 1-200，period 必须是 daily/weekly/once
+- `deleteCustom`：权限三校验 — 文档存在 / 是本情侣 / 是 custom 类型
+
+---
+
+## 🎁 奖励商店（6 条）
+
+### 19. 预设奖励（写在代码里）
+```
+电影 50 / 做饭 80 / 按摩 100 / 甜言蜜语 30 / 周末随叫 150 / 奶茶 20
+```
+
+### 20. `rewards.list`
+- 预设（固定）+ 自定义（`where coupleId type='custom'`）合并返回
+
+### 21. `rewards.redeem({rewardId})` — 核心兑换流
+**4 步**：
+1. `resolveReward` 解析奖励（含 preset 分支）
+2. 余额校验：`myPoints >= price`
+3. 调 `pointsLib.adjust({delta: -price, type: 'redeem'})` 扣分（此处会走冷静期检查 → **冷静期内连兑换都被拦**）
+4. 写 `redemptions` 记录，`status: 'pending'`
+- 返回 `{redemptionId, pricePaid}`
+
+### 22. `rewards.fulfill({redemptionId})` — 对方履行
+- **防自嗨校验**：`redeemerOpenid === wx.OPENID` → 400（兑换人不能自己标完成）
+- 幂等：已经 `fulfilled` 的直接返回 `{already: true}`
+- 更新 status + `fulfilledAt` + `fulfilledBy`
+
+### 23-24. 自定义奖励 CRUD + 兑换记录列表
+- `createCustom`：title 必填，price 1-100000
+- `deleteCustom`：权限三校验（同任务）
+- `listRedemptions`：按时间倒序拉最近 50 条
+
+---
+
+## 🌸 纪念日（3 条）
+
+### 25. `anniversary.list` + 倒计时计算
+- `repeat: 'yearly'` → 把 target date 的年份改成今年，如果已过就加 1 年，算天数差
+- `repeat: 'none'` → 未到就算差，已过 = 0
+- 公式用 `Math.ceil`，避免"差 0.4 天"显示为 0
+
+### 26-27. create / delete
+- 创建：title + date 必填，`new Date(date)` 校验；默认 emoji='🌸'、nextLabel='纪念日'、repeat='yearly'
+- 删除：权限两校验（存在 + 本情侣）
+
+---
+
+## 😊 心情打卡（3 条）
+
+### 28. `mood.set` — upsert 模式
+- 唯一键：`(coupleId, _openid, date)`，date 是 `YYYY-MM-DD` 字符串（不是 timestamp）
+- 已有记录 → update 覆盖；无记录 → add 新文档
+- 返回 `{updated: true}` 或 `{created: true}`
+
+### 29. `mood.getToday`
+- 一次查 `where: {coupleId, date: 今日}`，过滤出双方的记录
+- 返回 `{mine: {mood, note} | null, partner: {...} | null}`
+
+### 30. `mood.getWeek`
+- 起点：`今天-6天 00:00`
+- 只返回本人的记录（不是双方），按 date 升序
+
+---
+
+## 💌 留言板（4 条）
+
+### 31. `letters.send`
+- content 长度 1-500 字，trim 后校验
+- 写入 `{coupleId, content, likes: 0, createdAt}`，`_openid` 自动注入
+
+### 32. `letters.list`
+- 按 `createdAt` 倒序分页，limit 上限 50
+
+### 33. `letters.like`
+- `_.inc(1)` 原子自增；任一方都能点（包括自己）
+
+### 34. `letters.delete`
+- **只能删自己的**：`res.data._openid !== wx.OPENID` → 403
+
+---
+
+## 🎯 共同目标（4 条）
+
+### 35. `goals.list`
+- 按创建时间倒序返回，包含 `{title, emoji, total, current, contributions, status}`
+
+### 36. `goals.create`
+- title 必填，total 1-1000000
+- 初始值：`current: 0`, `contributions: {}`, `status: 'active'`
+
+### 37. `goals.contribute` — 最复杂的一个 action
+**5 步校验 + 3 步写入**：
+1. amount > 0 且 ≤ 10000
+2. 余额够
+3. goal 存在且归属本情侣
+4. goal status 必须 `active`
+5. 调 `pointsLib.adjust({delta: -amount, type: 'goal'})` 扣分（同样走冷静期检查）
+6. 达成判定：`newCurrent = min(total, current + amount)`，`>= total` 则标 `achieved`
+7. 更新 goal：`current` 用 `_.inc(amount)`，`contributions.${openid}` 用 `_.inc(amount)`
+8. 返回 `{achieved, current, total}`
+
+### 38. `goals.delete`
+- 权限两校验。**注意**：删除不退积分（设计上投入即决）
+
+---
+
+## 🧘 冷静期（4 条）
+
+### 39. `cooldown.start`
+- durationMin 默认 30，上限 720（12 小时）
+- **幂等**：若已有 active 冷静期 → 直接返回 `{already: true}`
+- 新建文档：`{startedBy, startAt: now, endAt: now + durationMin, endVoters: [], status: 'active'}`
+
+### 40. `cooldown.getActive` — 含自动过期
+- 查最新 active 冷静期
+- 算 `remainSec = max(0, (endAt - now) / 1000)`
+- **自动收尾**：若 `remainSec === 0 && status === 'active'` → 立即 update 为 `expired`，返回 `{active: false, expired: true}`
+- 否则返回 `{active, remainSec, endVoters}`
+
+### 41. `cooldown.extend`
+- additionalMin 1-120
+- `endAt = endAt + additionalMin`
+- **副作用**：清空 `endVoters`（延长了就当大家都不想结束了）
+
+### 42. `cooldown.requestEnd` — 双方投票制
+- 把自己加入 `endVoters`（Set 去重）
+- 从 `couples.members` 拿双方 openid
+- 若双方都在 voters 里 → 更新 status 为 `ended`，返回 `{ended: true}`
+- 否则只更新 voters，返回 `{ended: false, waitingForPartner: true}`
+
+**全局副作用**：冷静期 active 时，所有 `delta < 0` 的 points 变动都会被 `points.adjust` 拦截 → 兑换、投目标、抽奖、扣分按钮全部报 409
+
+---
+
+## ⚠️ 惩罚池（3 条）
+
+### 43. `punishment.getStatus`
+- 遍历 `LEVELS` 数组（轻度 ≤-30 / 中度 ≤-60 / 重度 ≤-100）
+- 正向遍历：积分小于等于阈值的最后一个 = `currentLevel`；大于某阈值的第一个 = `nextLevel`
+- `nextLevelGap = max(0, points - nextLevel.threshold)`（距下一级差多少负分）
+- `progressPercent`：`-points / 100 * 100`，截断 0-100
+
+### 44. `punishment.accept`
+- 可传 level 指定等级，不传自动根据当前积分选
+- **24h 防重复**：查 `punishments.where({coupleId, _openid, level, status: [pending|accepted], createdAt >= 24h前})`.count()，大于 0 就 409
+- 写记录：`status: 'accepted'`
+
+### 45. `punishment.complete`
+- **防自嗨**：`res.data._openid === wx.OPENID` → 400（被惩罚人不能自己标完成）
+- 更新 status=completed + completedBy
+
+---
+
+## 🎲 幸运盒（2 条）
+
+### 46. `luckyDraw.draw` — 加权随机算法
+**核心**：
+1. 余额 >= 20 校验
+2. `pickByWeight`：计算总权重（60+30+10=100），`Math.random() * total`，遍历累减
+3. 从选中稀有度的 items 里随机一个
+4. 扣 20 积分（走 cooldown 检查）
+5. 写 `luckyDraws` 记录
+6. **若奖品有 bonus**：再调一次 `pointsLib.adjust` 加 bonus，type=`draw-bonus`（两条 records 分开写）
+7. 返回 `{rarity, prize}`
+
+### 47. `luckyDraw.history`
+- 按时间倒序返回最近 30 条
+
+---
+
+## 🧭 前端启动链路（3 条）
+
+### 48. `app.onLaunch`
+- 检查 `wx.cloud` 是否可用（基础库 >= 2.2.3）
+- `wx.cloud.init({env})`，`env` 为空抛出警告 modal
+- 把 `ready` 赋值为 bootstrap Promise
+
+### 49. `app.bootstrap`
+- 先看 storage 里的 openid 缓存，命中就跳过 login 云函数
+- 无缓存 → 调 `login` 云函数拿 openid 存 storage
+- 调 `user.getProfile`，写入 globalData 的 `user / bound / coupleId`
+- **全流程打点**：`[bootstrap:launch]` → `[cloud-init-ok]` → `[openid-cached|ok]` → `[profile-ok]`
+
+### 50. `app.refreshProfile`
+- 绑定/解绑成功后调用，重新拉 profile 同步 globalData
+
+---
+
+## 📊 统计汇总
+
+| 功能域 | 独立逻辑条数 |
+|---|---|
+| 基础设施 | 3 |
+| 用户资料 | 2 |
+| 情侣关系 | 5 |
+| 首页聚合 | 1 |
+| 积分引擎 | 2 |
+| 任务系统 | 5 |
+| 奖励商店 | 6 |
+| 纪念日 | 3 |
+| 心情打卡 | 3 |
+| 留言板 | 4 |
+| 共同目标 | 4 |
+| 冷静期 | 4 |
+| 惩罚池 | 3 |
+| 幸运盒 | 2 |
+| 前端启动链路 | 3 |
+| **合计** | **50** |
+
+---
+
+## 🔗 隐藏的跨模块耦合（很重要）
+
+这 5 处耦合不是独立 action，但贯穿多个功能：
+
+1. **冷静期 → 所有扣分路径**：`points.adjust(delta<0)` 在 4 个场景下都会被拦截（手动扣分 / 兑换 / 目标投入 / 抽奖扣费），通过 `couple.points` 共享积分池实现
+2. **任务完成 → 积分加成**：`tasks.complete` 调用 `pointsLib.adjust`，走完整校验
+3. **积分变动 → records 自动留痕**：任何 `points.adjust` 都会在 `records` 集合留一条记录，账本和时间线都是从这里读
+4. **绑定/解绑 → 双端数据同步**：`couples.status` + 两个 `users.coupleId` 必须一致，通过 `Promise.all` 并行写但不是事务
+5. **抽奖红利 → 两条 records**：如果抽到 +5 积分券，会产生两条 records：`type='draw'` 扣 20 + `type='draw-bonus'` 加 5
+
+这些耦合让"给对方加分"能自动触发"任务打卡进度+惩罚池等级变化+共同目标进度"的连锁效应。
+
+---
+
+## 🔎 如何排查问题
+
+**前端某操作失败时**：
+1. 看微信开发者工具 Console，找 `[api:biz-err]` 或 `[api:err]`，拿到 action 名和 code
+2. 根据 code 判断：400 参数错 / 403 权限/绑定问题 / 404 资源不存在 / 409 业务冲突（重复操作、冷静期）
+3. 按 action 名在本文档里定位具体逻辑
+
+**后端业务错时**：
+1. 云开发控制台 → 云函数 → `quickstartFunctions` → 日志
+2. 按前缀搜索：`[action:err]` 看完整堆栈
+3. 关键业务操作有额外 info 日志（如 `[points.adjust]`、`[couple.bindByCode]`）可以追踪
+
+**积分对不上账时**：
+1. 去 `records` 集合按 coupleId 过滤，按 createdAt 排序
+2. 每笔变动都有 `type` 字段（add/deduct/task/redeem/goal/draw/draw-bonus）
+3. 对比 `couples.points` 的当前值 vs records 累加和是否一致
