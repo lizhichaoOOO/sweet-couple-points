@@ -13,7 +13,8 @@
     "pages/punishment/punishment",
     "pages/shared-goal/shared-goal",
     "pages/lucky-draw/lucky-draw",
-    "pages/cooldown/cooldown"
+    "pages/cooldown/cooldown",
+    "pages/games/games"
   ],
   "window": {
     "backgroundTextStyle": "light",

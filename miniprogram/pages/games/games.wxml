@@ -1,0 +1,23 @@
+<!--pages/games/games.wxml-->
+<view class="page">
+  <view class="hero">
+    <view class="hero-emoji">🎮</view>
+    <view class="hero-title">双人小游戏</view>
+    <view class="hero-desc">陪 TA 一起玩，积分和感情一起涨</view>
+  </view>
+
+  <view class="grid">
+    <view
+      wx:for="{{games}}"
+      wx:key="key"
+      class="game-card"
+      data-game="{{item}}"
+      bindtap="onPlay"
+    >
+      <view class="card-emoji">{{item.emoji}}</view>
+      <view class="card-title">{{item.title}}</view>
+      <view class="card-desc">{{item.desc}}</view>
+      <view class="coming-tag">敬请期待</view>
+    </view>
+  </view>
+</view>

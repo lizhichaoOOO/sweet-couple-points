@@ -21,6 +21,7 @@ Page({
       { icon: '😊', label: '心情打卡', url: '/pages/mood/mood' },
       { icon: '🎯', label: '共同目标', url: '/pages/shared-goal/shared-goal' },
       { icon: '🎁', label: '幸运盒',   url: '/pages/lucky-draw/lucky-draw' },
+      { icon: '🎮', label: '双人游戏', url: '/pages/games/games' },
       { icon: '⚠️', label: '惩罚池',   url: '/pages/punishment/punishment' },
       { icon: '🧘', label: '冷静模式', url: '/pages/cooldown/cooldown' },
       { icon: '🌸', label: '纪念日',   url: '/pages/anniversary/anniversary' }

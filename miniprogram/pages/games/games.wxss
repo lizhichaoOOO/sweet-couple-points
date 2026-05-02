@@ -1,0 +1,75 @@
+/* pages/games/games.wxss */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFD9C2 0%, #FFE4EC 40%, #FFF0F3 100%);
+  padding: 40rpx 32rpx 80rpx;
+  box-sizing: border-box;
+}
+
+.hero {
+  text-align: center;
+  padding: 40rpx 0 48rpx;
+}
+
+.hero-emoji {
+  font-size: 120rpx;
+  margin-bottom: 16rpx;
+}
+
+.hero-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+}
+
+.hero-desc {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+.game-card {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-emoji {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8rpx;
+}
+
+.card-desc {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  min-height: 62rpx;
+}
+
+.coming-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFD1DC, #FFB6CE);
+  color: var(--color-primary);
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 6rpx 20rpx;
+  border-radius: 24rpx;
+  margin-top: 16rpx;
+}
