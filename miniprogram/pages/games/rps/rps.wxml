@@ -1,0 +1,316 @@
+<!--pages/games/rps/rps.wxml-->
+<view class="page">
+
+  <!-- ===== loading ===== -->
+  <view wx:if="{{state === 'loading'}}" class="loading">加载中...</view>
+
+  <!-- ===== idle：选变体开局 ===== -->
+  <view wx:elif="{{state === 'idle'}}" class="section idle">
+    <view class="hero">
+      <view class="hero-emoji">✊✌️✋</view>
+      <view class="hero-title">石头剪刀布</view>
+      <view class="hero-desc">5 种玩法，赢的 +5 分，输的 -5 分</view>
+    </view>
+
+    <view wx:if="{{lastResult}}" class="last-card">
+      <view class="last-label">上一局</view>
+      <view class="last-line">
+        <text class="last-variant">{{lastResult.variant}}</text>
+        <text class="last-outcome outcome-{{lastResult.outcome}}">
+          {{lastResult.outcome === 'win' ? '你赢了 +5' : lastResult.outcome === 'lose' ? '你输了 -5' : '平局'}}
+        </text>
+      </view>
+    </view>
+
+    <view class="variant-title">选个玩法开局</view>
+
+    <view class="variant-list">
+      <view
+        wx:for="{{variantUI}}"
+        wx:key="key"
+        class="variant-card"
+        data-key="{{item.key}}"
+        bindtap="pickVariant"
+      >
+        <view class="v-emoji">{{item.emoji}}</view>
+        <view class="v-main">
+          <view class="v-title">{{item.title}}</view>
+          <view class="v-desc">{{item.desc}}</view>
+        </view>
+        <view class="v-arrow">›</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== choose-move：我要出手 ===== -->
+  <view wx:elif="{{state === 'choose-move'}}" class="section move">
+    <view class="stage-title">{{variantInfo.name}}</view>
+    <view class="stage-sub">{{variantInfo.desc}}</view>
+
+    <!-- classic / xlq：三选一 -->
+    <block wx:if="{{session.variant === 'classic' || session.variant === 'xlq'}}">
+      <view class="choice-grid three">
+        <view
+          wx:for="{{variantInfo.choices}}"
+          wx:for-item="c"
+          wx:key="*this"
+          class="choice-card {{selectedChoice === c ? 'choice-active' : ''}}"
+          data-choice="{{c}}"
+          bindtap="chooseOne"
+        >
+          <view class="choice-emoji">{{labels[c].emoji}}</view>
+          <view class="choice-label">{{labels[c].label}}</view>
+        </view>
+      </view>
+      <button class="big-btn" bindtap="submitClassicOrXlq" disabled="{{!selectedChoice}}">确认出手</button>
+    </block>
+
+    <!-- num：十五二十 -->
+    <block wx:elif="{{session.variant === 'num'}}">
+      <view class="num-section">
+        <view class="num-title">猜总数（双方出数之和）</view>
+        <view class="num-row">
+          <view
+            wx:for="{{numGuesses}}"
+            wx:for-item="g"
+            wx:key="*this"
+            class="num-pill {{numGuess === g ? 'num-active' : ''}}"
+            data-n="{{g}}"
+            bindtap="pickGuess"
+          >{{g}}</view>
+        </view>
+      </view>
+      <view class="num-section">
+        <view class="num-title">你出几？（对方猜不到就是你赢）</view>
+        <view class="num-row">
+          <view
+            wx:for="{{numValues}}"
+            wx:for-item="v"
+            wx:key="*this"
+            class="num-pill {{numValue === v ? 'num-active' : ''}}"
+            data-n="{{v}}"
+            bindtap="pickValue"
+          >{{v}}</view>
+        </view>
+      </view>
+      <button class="big-btn" bindtap="submitNum" disabled="{{numGuess === null || numValue === null}}">确认</button>
+    </block>
+
+    <!-- twohand 第 1 轮：出 2 只手 -->
+    <block wx:elif="{{session.variant === 'twohand'}}">
+      <view class="stage-hint">先出 2 只手（可以相同），下一步再选保留哪只</view>
+      <view class="chosen-hands">
+        <view class="chosen-slot">
+          <text wx:if="{{selectedHands[0]}}">{{labels[selectedHands[0]].emoji}}</text>
+          <text wx:else class="slot-ph">手 1</text>
+        </view>
+        <view class="chosen-slot">
+          <text wx:if="{{selectedHands[1]}}">{{labels[selectedHands[1]].emoji}}</text>
+          <text wx:else class="slot-ph">手 2</text>
+        </view>
+      </view>
+      <view class="choice-grid three">
+        <view
+          wx:for="{{variantInfo.choices}}"
+          wx:for-item="c"
+          wx:key="*this"
+          class="choice-card"
+          data-hand="{{c}}"
+          bindtap="pickHand"
+        >
+          <view class="choice-emoji">{{labels[c].emoji}}</view>
+          <view class="choice-label">{{labels[c].label}}</view>
+        </view>
+      </view>
+      <view class="btn-row">
+        <button class="nav-btn" bindtap="clearHands">清除</button>
+        <button class="big-btn flex1" bindtap="submitTwohandRound1" disabled="{{selectedHands.length !== 2}}">出牌</button>
+      </view>
+    </block>
+
+    <!-- dice：摇骰子 -->
+    <block wx:elif="{{session.variant === 'dice'}}">
+      <view class="dice-stage">
+        <view class="dice-row {{diceRolling ? 'rolling' : ''}}">
+          <view wx:for="{{diceTempView}}" wx:for-item="d" wx:key="index" class="dice-box">{{d}}</view>
+        </view>
+        <view class="dice-hint">
+          {{diceRolling ? '摇骰子中...' : '点下方按钮开始摇'}}
+        </view>
+        <button
+          class="big-btn"
+          bindtap="startDiceRoll"
+          disabled="{{diceRolling}}"
+        >{{diceRolling ? '摇啊摇...' : '摇 3 颗骰子'}}</button>
+      </view>
+    </block>
+
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- ===== wait-partner ===== -->
+  <view wx:elif="{{state === 'wait-partner'}}" class="section waiting">
+    <view class="waiting-emoji">⏳</view>
+    <view class="waiting-title">已提交</view>
+    <view class="waiting-desc">等 TA 出完手，系统会自动算胜负</view>
+
+    <!-- 展示我自己已出的（dice 给看一眼结果） -->
+    <view wx:if="{{diceFinal}}" class="my-dice-preview">
+      <view class="dice-row">
+        <view wx:for="{{diceFinal}}" wx:for-item="d" wx:key="index" class="dice-box final">{{d}}</view>
+      </view>
+      <view class="dice-sum">我：{{diceFinal[0] + diceFinal[1] + diceFinal[2]}}</view>
+    </view>
+
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- ===== choose-keep：双手第 2 轮 ===== -->
+  <view wx:elif="{{state === 'choose-keep'}}" class="section move">
+    <view class="stage-title">保留一只手</view>
+    <view class="stage-sub">双方都已出 2 只手，现在选出最终的那只</view>
+
+    <view class="twohand-panel">
+      <view class="hand-group">
+        <view class="hand-group-label">我的两只手</view>
+        <view class="hands-row">
+          <view
+            wx:for="{{session.myMove.hands}}"
+            wx:for-item="h"
+            wx:key="index"
+            class="hand-chip {{selectedKeep === h ? 'hand-active' : ''}}"
+            data-hand="{{h}}"
+            bindtap="pickKeep"
+          >
+            <text class="hand-emoji">{{labels[h].emoji}}</text>
+            <text class="hand-label">{{labels[h].label}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="hand-group">
+        <view class="hand-group-label">TA 的两只手</view>
+        <view class="hands-row">
+          <view
+            wx:for="{{session.partnerMove.hands}}"
+            wx:for-item="h"
+            wx:key="index"
+            class="hand-chip partner"
+          >
+            <text class="hand-emoji">{{labels[h].emoji}}</text>
+            <text class="hand-label">{{labels[h].label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button class="big-btn" bindtap="submitKeep" disabled="{{!selectedKeep}}">保留这只</button>
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- ===== result ===== -->
+  <view wx:elif="{{state === 'result'}}" class="section result">
+    <view class="outcome-banner outcome-{{result.outcome}}">
+      <view class="outcome-emoji">
+        {{result.outcome === 'win' ? '🏆' : result.outcome === 'lose' ? '😭' : '🤝'}}
+      </view>
+      <view class="outcome-text">
+        {{result.outcome === 'win' ? '你赢了！' : result.outcome === 'lose' ? '你输了' : '平局'}}
+      </view>
+      <view wx:if="{{result.reward}}" class="outcome-reward">
+        {{result.outcome === 'win' ? '+' : '-'}}{{result.reward}} 积分
+      </view>
+    </view>
+
+    <!-- 每个变体的结果细节 -->
+    <view class="result-detail">
+      <!-- classic / xlq -->
+      <block wx:if="{{result.variant === 'classic' || result.variant === 'xlq'}}">
+        <view class="vs-row">
+          <view class="vs-side">
+            <view class="vs-label">我</view>
+            <view class="vs-emoji">{{labels[result.myMove.choice].emoji}}</view>
+            <view class="vs-name">{{labels[result.myMove.choice].label}}</view>
+          </view>
+          <view class="vs-divider">VS</view>
+          <view class="vs-side">
+            <view class="vs-label">TA</view>
+            <view class="vs-emoji">{{labels[result.partnerMove.choice].emoji}}</view>
+            <view class="vs-name">{{labels[result.partnerMove.choice].label}}</view>
+          </view>
+        </view>
+      </block>
+
+      <!-- num -->
+      <block wx:elif="{{result.variant === 'num'}}">
+        <view class="num-result">
+          <view class="num-total">总和 = {{result.details.total}}</view>
+          <view class="num-side">
+            <text class="num-who">我：</text>
+            <text>猜 {{result.myMove.guess}} · 出 {{result.myMove.value}}</text>
+          </view>
+          <view class="num-side">
+            <text class="num-who">TA：</text>
+            <text>猜 {{result.partnerMove.guess}} · 出 {{result.partnerMove.value}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- twohand -->
+      <block wx:elif="{{result.variant === 'twohand'}}">
+        <view class="twohand-result">
+          <view class="th-row">
+            <view class="th-label">我出过：</view>
+            <view class="th-hands">
+              <text wx:for="{{result.myMove.hands}}" wx:for-item="h" wx:key="index"
+                    class="th-h {{h === result.myKeep ? 'kept' : ''}}">
+                {{labels[h].emoji}}
+              </text>
+            </view>
+          </view>
+          <view class="th-row">
+            <view class="th-label">TA 出过：</view>
+            <view class="th-hands">
+              <text wx:for="{{result.partnerMove.hands}}" wx:for-item="h" wx:key="index"
+                    class="th-h {{h === result.partnerKeep ? 'kept' : ''}}">
+                {{labels[h].emoji}}
+              </text>
+            </view>
+          </view>
+          <view class="vs-row">
+            <view class="vs-side">
+              <view class="vs-label">我保留</view>
+              <view class="vs-emoji">{{labels[result.myKeep].emoji}}</view>
+            </view>
+            <view class="vs-divider">VS</view>
+            <view class="vs-side">
+              <view class="vs-label">TA 保留</view>
+              <view class="vs-emoji">{{labels[result.partnerKeep].emoji}}</view>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- dice -->
+      <block wx:elif="{{result.variant === 'dice'}}">
+        <view class="dice-result">
+          <view class="dice-side">
+            <view class="dice-label">我 · 和 {{result.mySum}}</view>
+            <view class="dice-row">
+              <view wx:for="{{result.myMove.dice}}" wx:for-item="d" wx:key="index" class="dice-box final">{{d}}</view>
+            </view>
+          </view>
+          <view class="dice-side">
+            <view class="dice-label">TA · 和 {{result.partnerSum}}</view>
+            <view class="dice-row">
+              <view wx:for="{{result.partnerMove.dice}}" wx:for-item="d" wx:key="index" class="dice-box final">{{d}}</view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <button class="btn-primary again-btn" bindtap="backToIdle">再来一局</button>
+  </view>
+
+</view>

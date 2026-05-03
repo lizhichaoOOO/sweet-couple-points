@@ -16,7 +16,8 @@
     "pages/cooldown/cooldown",
     "pages/games/games",
     "pages/games/truth-dare/truth-dare",
-    "pages/games/quiz/quiz"
+    "pages/games/quiz/quiz",
+    "pages/games/rps/rps"
   ],
   "window": {
     "backgroundTextStyle": "light",

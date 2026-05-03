@@ -21,7 +21,8 @@ const COL = {
   cooldowns: 'cooldowns',
   punishments: 'punishments',
   luckyDraws: 'luckyDraws',
-  quizSessions: 'quizSessions'
+  quizSessions: 'quizSessions',
+  rpsSessions: 'rpsSessions'
 }
 
 // 带 code 的业务错误

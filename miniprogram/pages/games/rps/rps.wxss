@@ -1,0 +1,449 @@
+/* pages/games/rps/rps.wxss */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFD9C2 0%, #FFE4EC 40%, #FFF0F3 100%);
+  padding: 32rpx 32rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.loading {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 240rpx 0;
+}
+
+.section { display: flex; flex-direction: column; }
+
+/* === idle === */
+.hero {
+  text-align: center;
+  padding: 48rpx 0 32rpx;
+}
+.hero-emoji { font-size: 100rpx; margin-bottom: 16rpx; }
+.hero-title { font-size: 48rpx; font-weight: 700; color: var(--color-text); margin-bottom: 8rpx; }
+.hero-desc { font-size: 24rpx; color: var(--color-text-muted); }
+
+.last-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 138, 0.08);
+}
+.last-label { font-size: 22rpx; color: var(--color-text-muted); margin-bottom: 8rpx; }
+.last-line { display: flex; justify-content: space-between; align-items: center; }
+.last-variant { font-weight: 600; color: var(--color-text); }
+.last-outcome { font-size: 26rpx; font-weight: 700; }
+.outcome-win { color: #4ECDC4; }
+.outcome-lose { color: var(--color-primary); }
+.outcome-draw { color: var(--color-text-muted); }
+
+.variant-title {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 16rpx;
+}
+
+.variant-list { display: flex; flex-direction: column; gap: 16rpx; }
+
+.variant-card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 24rpx 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.1);
+}
+.v-emoji {
+  width: 96rpx; height: 96rpx;
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+.v-main { flex: 1; }
+.v-title { font-size: 30rpx; font-weight: 700; margin-bottom: 4rpx; color: var(--color-text); }
+.v-desc { font-size: 22rpx; color: var(--color-text-muted); }
+.v-arrow { font-size: 48rpx; color: var(--color-text-muted); line-height: 1; }
+
+/* === choose-move 公共 === */
+.stage-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin: 32rpx 0 8rpx;
+}
+.stage-sub {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 40rpx;
+}
+.stage-hint {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 24rpx;
+}
+
+.choice-grid {
+  display: grid;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.choice-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.choice-card {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 36rpx 16rpx;
+  text-align: center;
+  border: 4rpx solid transparent;
+  box-shadow: 0 6rpx 16rpx rgba(255, 107, 138, 0.1);
+  transition: all 0.2s;
+}
+.choice-active {
+  border-color: var(--color-primary);
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  transform: scale(1.05);
+}
+.choice-emoji { font-size: 72rpx; margin-bottom: 8rpx; }
+.choice-label { font-size: 26rpx; color: var(--color-text); font-weight: 600; }
+
+/* 数字 */
+.num-section { margin-bottom: 32rpx; }
+.num-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 16rpx;
+  text-align: center;
+}
+.num-row {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.num-pill {
+  min-width: 96rpx;
+  padding: 20rpx 24rpx;
+  background: #fff;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 138, 0.1);
+  border: 3rpx solid transparent;
+}
+.num-active {
+  background: linear-gradient(135deg, #FF6B8A, #FF8FA8);
+  color: #fff;
+  border-color: #FF6B8A;
+}
+
+/* twohand 第 1 轮 */
+.chosen-hands {
+  display: flex;
+  gap: 32rpx;
+  justify-content: center;
+  margin-bottom: 32rpx;
+}
+.chosen-slot {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 24rpx;
+  background: #fff;
+  border: 4rpx dashed var(--color-primary-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72rpx;
+  color: var(--color-text-muted);
+}
+.slot-ph {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+}
+
+.btn-row {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+  margin-top: 8rpx;
+}
+.flex1 { flex: 1; }
+
+/* dice */
+.dice-stage {
+  text-align: center;
+  padding: 48rpx 0;
+}
+.dice-row {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  margin-bottom: 24rpx;
+}
+.dice-box {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 24rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  box-shadow: 0 8rpx 20rpx rgba(255, 107, 138, 0.15);
+  border: 4rpx solid var(--color-primary-soft);
+}
+.dice-row.rolling .dice-box {
+  animation: shake 0.2s linear infinite;
+}
+@keyframes shake {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.dice-box.final {
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  color: var(--color-primary);
+}
+.dice-hint {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 32rpx;
+}
+
+/* 大按钮 */
+.big-btn {
+  background: linear-gradient(135deg, #FF6B8A 0%, #FF8FA8 100%);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  border-radius: 60rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 10rpx 28rpx rgba(255, 107, 138, 0.3);
+}
+.big-btn[disabled] {
+  background: #F5C5D1;
+  color: #fff;
+  box-shadow: none;
+}
+.big-btn::after { border: none; }
+
+.nav-btn {
+  background: #fff;
+  color: var(--color-primary);
+  font-size: 28rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  padding: 20rpx 36rpx;
+  border: 2rpx solid var(--color-primary-soft);
+  line-height: 1;
+}
+.nav-btn::after { border: none; }
+
+.cancel-link {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  margin-top: 24rpx;
+}
+
+/* === wait-partner === */
+.waiting { text-align: center; padding: 80rpx 32rpx; }
+.waiting-emoji {
+  font-size: 140rpx;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12rpx); }
+}
+.waiting-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 24rpx 0 12rpx;
+}
+.waiting-desc {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 32rpx;
+}
+.my-dice-preview { margin: 24rpx 0 32rpx; }
+.dice-sum {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-top: 8rpx;
+}
+
+.refresh-btn {
+  width: 60%;
+  margin: 0 auto 24rpx;
+}
+
+/* === choose-keep 双手 === */
+.twohand-panel {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.1);
+}
+.hand-group { margin-bottom: 24rpx; }
+.hand-group:last-child { margin-bottom: 0; }
+.hand-group-label {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 12rpx;
+}
+.hands-row {
+  display: flex;
+  gap: 16rpx;
+}
+.hand-chip {
+  flex: 1;
+  padding: 24rpx 12rpx;
+  border-radius: 24rpx;
+  background: #FFF5F7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  border: 3rpx solid transparent;
+}
+.hand-chip.partner {
+  background: #F5F0F2;
+  opacity: 0.85;
+}
+.hand-active {
+  background: linear-gradient(135deg, #FFE4EC, #FFD1DC);
+  border-color: var(--color-primary);
+  transform: scale(1.04);
+}
+.hand-emoji { font-size: 56rpx; }
+.hand-label { font-size: 22rpx; color: var(--color-text); }
+
+/* === result === */
+.outcome-banner {
+  padding: 40rpx 32rpx;
+  border-radius: 40rpx;
+  margin-bottom: 32rpx;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+.outcome-banner.outcome-win {
+  background: linear-gradient(135deg, #6FE3CC, #4ECDC4);
+}
+.outcome-banner.outcome-lose {
+  background: linear-gradient(135deg, #FFB6CE, #FF6B8A);
+}
+.outcome-banner.outcome-draw {
+  background: linear-gradient(135deg, #C5A3E3, #9999D8);
+}
+.outcome-emoji { font-size: 120rpx; margin-bottom: 12rpx; }
+.outcome-text { font-size: 44rpx; font-weight: 700; }
+.outcome-reward { font-size: 28rpx; margin-top: 8rpx; opacity: 0.95; }
+
+.result-detail {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 138, 0.1);
+}
+
+.vs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.vs-side { text-align: center; flex: 1; }
+.vs-label { font-size: 22rpx; color: var(--color-text-muted); margin-bottom: 8rpx; }
+.vs-emoji { font-size: 100rpx; line-height: 1; }
+.vs-name { font-size: 26rpx; color: var(--color-text); margin-top: 4rpx; }
+.vs-divider {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  padding: 0 16rpx;
+}
+
+/* num 结果 */
+.num-result { text-align: center; }
+.num-total {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16rpx;
+}
+.num-side {
+  font-size: 26rpx;
+  padding: 8rpx 0;
+  display: flex;
+  justify-content: center;
+  gap: 8rpx;
+}
+.num-who { color: var(--color-text-muted); }
+
+/* twohand 结果 */
+.twohand-result {}
+.th-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 12rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+.th-row:last-of-type { border-bottom: none; }
+.th-label { font-size: 24rpx; color: var(--color-text-muted); flex-shrink: 0; }
+.th-hands { display: flex; gap: 16rpx; }
+.th-h {
+  font-size: 48rpx;
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+.th-h.kept {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.1);
+}
+.twohand-result .vs-row {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx dashed var(--color-border);
+}
+
+/* dice 结果 */
+.dice-result {
+  display: flex;
+  justify-content: space-around;
+  gap: 16rpx;
+}
+.dice-side { flex: 1; text-align: center; }
+.dice-label {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+}
+.dice-side .dice-row { gap: 12rpx; margin-bottom: 0; }
+.dice-side .dice-box {
+  width: 80rpx; height: 80rpx;
+  font-size: 40rpx;
+}
+
+.again-btn { width: 80%; margin: 0 auto; }

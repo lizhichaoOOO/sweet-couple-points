@@ -431,8 +431,55 @@
 - 答题自动跳下一题；所有题答完才能点提交
 - 结果页：分数圆环 + 感性文案 + 奖励横幅 + 逐题对比（绿/红边）
 
-### 待实现的 6 款游戏
-- rps / memory / who_knows / drawing / number_1a2b / dice_truth
+### 已实现：石头剪刀布 - 5 变体（6 个 action，需新集合 `rpsSessions`）
+
+**代码路径**：`lib/games/rps.js` + `pages/games/rps/`
+
+**5 种变体**：
+| 变体 key | 名称 | 玩法 | 轮数 |
+|---|---|---|---|
+| `classic` | 石头剪刀布 | 经典循环 rock>scissors>paper>rock | 1 |
+| `xlq` | 小人老虎枪 | 老虎吃小人, 小人拿枪, 枪打老虎（同构） | 1 |
+| `num` | 十五二十 | 各猜总数(0/5/10/15/20) + 各出数(0/5/10)，猜中者胜（另一方没猜中） | 1 |
+| `twohand` | 双手石头剪刀布 | 先各出 2 只手 → 看到对方两手后各选保留 1 只 → 比 | **2** |
+| `dice` | 筛子大小 | 服务端各摇 3 颗，和大者胜 | 1 |
+
+**积分规则**：
+- 胜方 `+5` 分（`type: 'game'`）
+- 负方 `-5` 分（冷静期内被拦则静默跳过，胜方仍加分）
+- 平局 `+0`
+
+**Action**：
+| Action | 说明 |
+|---|---|
+| `games.rps.start` | 开启新会话（传 `variant`），已有活跃局时幂等返回 |
+| `games.rps.current` | 返回 `{state, session, variantInfo, lastResult?}`，state 有 5 种：`none / await-my-move / await-partner-move / await-my-keep / await-partner-keep` |
+| `games.rps.submitMove` | 提交第一轮出手；dice 变体 move 可传空对象（服务端摇） |
+| `games.rps.submitKeep` | twohand 专用：提交第二轮保留的手 |
+| `games.rps.cancel` | 发起人可在对方未参与前取消 |
+| `games.rps.history` | 最近 20 局结果 |
+| `games.rps.listVariants` | 列出所有变体及奖励分 |
+
+**后端判胜 (`resolveWinner`)**：
+- `classic/xlq`：共用 `RPS_BEATS` 字典（rock/scissors/paper 和 gun/tiger/person 同构）
+- `num`：`total = a.value + b.value`；仅一方猜中 → 胜，都中/都没中 → 平
+- `twohand`：比 kept 手，standard RPS 规则；校验 kept 必须是已出的 2 只手之一
+- `dice`：比 3 颗骰子和
+
+**前端状态机**：
+`loading → idle(选变体) → choose-move(变体特化 UI) → wait-partner → [twohand: choose-keep → wait-partner] → result`
+
+每个变体有独立的出手 UI：
+- classic/xlq：3 个 emoji 大卡片，点击高亮，提交
+- num：两排胶囊（猜总数 × 出几），均需选
+- twohand：点击出手时轮流填 2 个 slot，"清除"按钮重置
+- dice：动画摇 1.5 秒 → 后端返回真实结果
+
+**冷静期兼容**：
+胜方加分走 `pointsLib.adjust` 不会被拦，负方扣分用 try/catch 包住——冷静期内扣分抛 409 时吞掉错误但仍 log 出来，session 正常 closed。
+
+### 待实现的 5 款游戏
+- memory / who_knows / drawing / number_1a2b / dice_truth
 - 遵循同样的 `lib/games/xxx.js` 模式
 - hub 卡片的 `ready: true` 控制是否可跳转
 

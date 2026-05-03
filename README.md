@@ -202,7 +202,7 @@ sweet-couple-points/
 2. 弹窗里填**集合名**（严格按下方的名称，**区分大小写**，不要加空格）
 3. 点 "**确定**"
 
-依次创建这 **15 个**：
+依次创建这 **16 个**：
 
 ```
 1.  users
@@ -220,9 +220,10 @@ sweet-couple-points/
 13. punishments
 14. luckyDraws
 15. quizSessions
+16. rpsSessions
 ```
 
-完成后左侧集合列表应该列出全部 15 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
+完成后左侧集合列表应该列出全部 16 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
 
 **4.3 （可选）创建关键索引**
 
@@ -527,6 +528,30 @@ sweet-couple-points/
 
 **索引建议**：`coupleId + status`（查找活跃会话）、`coupleId + closedAt desc`（历史）。
 
+### `rpsSessions` — 石头剪刀布会话（5 变体共用）
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `_id` | string | |
+| `coupleId` | string | |
+| `variant` | string | `classic` / `xlq` / `num` / `twohand` / `dice` |
+| `startedBy` | string | 发起人 openid |
+| `moves` | object | `{ [openid]: moveObj \| null }` 双方的出手数据，结构依 variant |
+| `keeps` | object \| null | 仅 twohand：`{ [openid]: 'rock'\|'paper'\|'scissors' }` |
+| `status` | string | `await-move` / `await-keep`（仅 twohand） / `closed` / `cancelled` |
+| `winner` | string | `'A'` / `'B'` / `'draw'`（A = startedBy，B = 另一方） |
+| `winnerOpenid` | string | 胜方 openid（平局为空串） |
+| `details` | object | 变体相关的结算细节（num 有 total，dice 有 sum 等） |
+| `reward` | number | 胜方获得的积分（draw 为 0） |
+| `createdAt`, `updatedAt`, `closedAt`, `cancelledAt` | date | |
+
+**moves 结构因 variant 不同**：
+- `classic` / `xlq`：`{ choice: 'rock'|'paper'|'scissors' }` 或 `'person'|'tiger'|'gun'`
+- `num`：`{ guess: 0-20, value: 0/5/10 }`
+- `twohand`：`{ hands: ['rock', 'paper'] }`
+- `dice`：`{ dice: [n, n, n] }`（服务端摇）
+
+**索引建议**：`coupleId + status`（查找活跃）、`coupleId + closedAt desc`（历史）。
+
 ### 数据库权限
 
 **不依赖**数据库的读写权限（那是前端直连 DB 的模式），所有写入都走云函数、云函数以管理员身份操作 DB。在云开发控制台给每个集合设置"**仅创建者可读写**"即可，防止意外的前端直连。
@@ -597,6 +622,13 @@ const res = await api('points.adjust', { delta: 10, reason: '晚安打卡' })
 | games | `games.quiz.submit` | 提交本人 10 题答案（双方都提交后自动结算） |
 | games | `games.quiz.cancel` | 发起人可在对方未答前取消 |
 | games | `games.quiz.history` | 最近 20 次测试结果 |
+| games | `games.rps.start` | 开启新的 RPS 局（传 variant: classic/xlq/num/twohand/dice） |
+| games | `games.rps.current` | 查询当前进行中的 RPS 局 |
+| games | `games.rps.submitMove` | 提交第一轮出手（dice 变体 move 传空对象） |
+| games | `games.rps.submitKeep` | twohand 第二轮：保留哪只手 |
+| games | `games.rps.cancel` | 发起人可在对方未参与前取消 |
+| games | `games.rps.history` | 最近 20 局结果 |
+| games | `games.rps.listVariants` | 列出所有变体及其描述 |
 
 ---
 
