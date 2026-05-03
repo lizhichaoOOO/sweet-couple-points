@@ -17,7 +17,8 @@
     "pages/games/games",
     "pages/games/truth-dare/truth-dare",
     "pages/games/quiz/quiz",
-    "pages/games/rps/rps"
+    "pages/games/rps/rps",
+    "pages/games/witch/witch"
   ],
   "window": {
     "backgroundTextStyle": "light",

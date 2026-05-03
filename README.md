@@ -202,7 +202,7 @@ sweet-couple-points/
 2. 弹窗里填**集合名**（严格按下方的名称，**区分大小写**，不要加空格）
 3. 点 "**确定**"
 
-依次创建这 **16 个**：
+依次创建这 **17 个**：
 
 ```
 1.  users
@@ -221,9 +221,10 @@ sweet-couple-points/
 14. luckyDraws
 15. quizSessions
 16. rpsSessions
+17. witchSessions
 ```
 
-完成后左侧集合列表应该列出全部 16 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
+完成后左侧集合列表应该列出全部 17 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
 
 **4.3 （可选）创建关键索引**
 
@@ -552,6 +553,22 @@ sweet-couple-points/
 
 **索引建议**：`coupleId + status`（查找活跃）、`coupleId + closedAt desc`（历史）。
 
+### `witchSessions` — 女巫的毒药对局
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `_id` | string | |
+| `coupleId` | string | |
+| `startedBy` | string | 发起人 openid |
+| `poisons` | object | `{ [openid]: number \| null }` 各自的毒格子 index（0-24） |
+| `picked` | array | `[{openid, cell}]` 吃的记录 |
+| `turnOpenid` | string | 当前该谁吃 |
+| `status` | string | `picking-poison` / `playing` / `closed` / `cancelled` |
+| `winner`, `loser` | string | 胜负双方 openid（平局都为空） |
+| `penalty` | string | 败方的随机惩罚文案 |
+| `createdAt`, `updatedAt`, `closedAt`, `cancelledAt` | date | |
+
+**索引建议**：`coupleId + status`（查找活跃）、`coupleId + closedAt desc`（历史）。
+
 ### 数据库权限
 
 **不依赖**数据库的读写权限（那是前端直连 DB 的模式），所有写入都走云函数、云函数以管理员身份操作 DB。在云开发控制台给每个集合设置"**仅创建者可读写**"即可，防止意外的前端直连。
@@ -629,6 +646,12 @@ const res = await api('points.adjust', { delta: 10, reason: '晚安打卡' })
 | games | `games.rps.cancel` | 发起人可在对方未参与前取消 |
 | games | `games.rps.history` | 最近 20 局结果 |
 | games | `games.rps.listVariants` | 列出所有变体及其描述 |
+| games | `games.witch.start` | 开启女巫毒药对局 |
+| games | `games.witch.current` | 查询当前对局状态（对方的毒不泄露） |
+| games | `games.witch.setPoison` | 秘密设置自己的毒（0-24 格） |
+| games | `games.witch.pickCell` | 吃草莓（可能中毒结算） |
+| games | `games.witch.cancel` | 对方未下毒前可取消 |
+| games | `games.witch.history` | 最近 20 局对局 |
 
 ---
 

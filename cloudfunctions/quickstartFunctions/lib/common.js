@@ -22,7 +22,8 @@ const COL = {
   punishments: 'punishments',
   luckyDraws: 'luckyDraws',
   quizSessions: 'quizSessions',
-  rpsSessions: 'rpsSessions'
+  rpsSessions: 'rpsSessions',
+  witchSessions: 'witchSessions'
 }
 
 // 带 code 的业务错误

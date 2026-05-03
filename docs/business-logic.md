@@ -478,7 +478,42 @@
 **冷静期兼容**：
 胜方加分走 `pointsLib.adjust` 不会被拦，负方扣分用 try/catch 包住——冷静期内扣分抛 409 时吞掉错误但仍 log 出来，session 正常 closed。
 
-### 待实现的 5 款游戏
+### 已实现：女巫的毒药（6 个 action，需新集合 `witchSessions`）
+
+**代码路径**：`lib/games/witch.js` + `pages/games/witch/`
+
+**玩法**：源自 2025 年爆火的同名 App，5×5 草莓格子（25 格）：
+1. `picking-poison` 阶段：双方各秘密选 1 颗草莓下毒（对方看不到）
+2. `playing` 阶段：轮流吃草莓，发起人先吃
+3. 吃到**对方**的毒 → 立即输；吃到自己的毒 → 安全
+4. 胜方 +5 分、败方 -5 分、附赠一条随机惩罚
+
+**Action**：
+| Action | 说明 |
+|---|---|
+| `games.witch.start` | 开局，状态设为 picking-poison |
+| `games.witch.current` | 返回当前状态（对方的毒未结算前不返回） |
+| `games.witch.setPoison` | 设置自己的毒（cell 0-24） |
+| `games.witch.pickCell` | 吃草莓。若命中对方毒 → 游戏结束 |
+| `games.witch.cancel` | 对方未下毒前可取消 |
+| `games.witch.history` | 最近 20 局 |
+
+**状态机**（5 种前端 state）：
+`none → idle → pick-my-poison → wait-partner-poison → my-turn ⇌ partner-turn → result`
+
+**视角安全**：`projectSessionForMe` 在结算前过滤掉 `partnerPoison` 字段，前端永远拿不到对方下毒的位置。
+
+**惩罚池**：代码里写了 15 条惩罚文案，从"清唱情歌"到"做 20 个俯卧撑"到"朋友圈公开表白"等，随机抽一条写入 session.penalty 字段，在 result 展示。
+
+**前端 UI**：
+- idle：hero + 上局回顾 + 规则速查 + 开局按钮
+- pick-my-poison：5×5 grid，点草莓切换选中 → 确认下毒
+- playing：grid 上我的毒有 ☠️ 标记（仅自己可见），轮次指示器
+- result：胜负 banner + 惩罚卡片 + 揭晓双方毒的位置（☠️ 我的毒 / 💀 TA 的毒）
+
+**冷静期兼容**：和 rps 一致，胜方 +5 不受阻，败方 -5 失败时吞错继续。
+
+### 待实现的 4 款游戏
 - memory / who_knows / drawing / number_1a2b / dice_truth
 - 遵循同样的 `lib/games/xxx.js` 模式
 - hub 卡片的 `ready: true` 控制是否可跳转

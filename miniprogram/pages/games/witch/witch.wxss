@@ -1,0 +1,271 @@
+/* pages/games/witch/witch.wxss */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #E8D4F5 0%, #FFE4EC 40%, #FFF0F3 100%);
+  padding: 32rpx 32rpx 60rpx;
+  box-sizing: border-box;
+}
+
+.loading { text-align: center; color: var(--color-text-muted); padding: 240rpx 0; }
+
+.section { display: flex; flex-direction: column; }
+
+/* === idle === */
+.hero { text-align: center; padding: 40rpx 0 32rpx; }
+.hero-emoji { font-size: 96rpx; margin-bottom: 16rpx; }
+.hero-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+  letter-spacing: 4rpx;
+}
+.hero-desc {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.last-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(200, 100, 200, 0.1);
+}
+.last-label { font-size: 22rpx; color: var(--color-text-muted); margin-bottom: 8rpx; }
+.last-outcome { font-size: 32rpx; font-weight: 700; }
+.last-outcome.outcome-win { color: #4ECDC4; }
+.last-outcome.outcome-lose { color: var(--color-primary); }
+.last-outcome.outcome-draw { color: var(--color-text-muted); }
+.last-penalty {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-top: 12rpx;
+  padding: 12rpx;
+  background: #FAF5FB;
+  border-radius: 16rpx;
+}
+
+.rule-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+}
+.rule-title {
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 12rpx;
+}
+.rule-item {
+  font-size: 24rpx;
+  color: var(--color-text);
+  line-height: 1.8;
+}
+
+.start-btn { width: 80%; margin: 0 auto; }
+
+/* === stage 公用 === */
+.stage-head { text-align: center; margin-bottom: 24rpx; }
+.stage-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8rpx;
+}
+.stage-sub {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+/* === 5x5 grid === */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12rpx;
+  margin-bottom: 32rpx;
+  padding: 20rpx;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(200, 100, 200, 0.12);
+}
+
+.cell {
+  aspect-ratio: 1 / 1;
+  background: #fff;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 54rpx;
+  position: relative;
+  box-shadow: 0 4rpx 10rpx rgba(255, 107, 138, 0.1);
+  transition: all 0.2s;
+  border: 3rpx solid transparent;
+}
+
+.cell-active {
+  cursor: pointer;
+}
+
+.cell-active:active {
+  transform: scale(0.94);
+  background: #FFE4EC;
+}
+
+.cell-poisoned {
+  background: linear-gradient(135deg, #C5A3E3, #FFB6CE);
+  border-color: var(--color-primary);
+  transform: scale(1.08);
+  box-shadow: 0 8rpx 20rpx rgba(255, 107, 138, 0.3);
+}
+
+.cell-eaten {
+  background: #F0E6E9;
+  opacity: 0.55;
+}
+
+.cell-my-poison {
+  background: linear-gradient(135deg, #FFF5F7, #FFE4EC);
+  border-color: var(--color-primary-soft);
+}
+
+.cell-emoji {
+  line-height: 1;
+}
+
+.cell-emoji.big {
+  font-size: 64rpx;
+}
+
+.poison-mark {
+  position: absolute;
+  top: 4rpx;
+  right: 6rpx;
+  font-size: 22rpx;
+}
+
+/* 图例 */
+.legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 24rpx;
+  padding: 16rpx 0;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+.legend-item {}
+
+/* === 按钮 === */
+.btn-primary {
+  background: linear-gradient(135deg, #9B5FD6 0%, #FF6B8A 100%);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  border-radius: 60rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 10rpx 28rpx rgba(155, 95, 214, 0.3);
+}
+.btn-primary[disabled] {
+  background: #E4D0F0;
+  color: #fff;
+  box-shadow: none;
+}
+.btn-primary::after { border: none; }
+
+.refresh-btn { width: 60%; margin: 0 auto 24rpx; }
+.again-btn { width: 80%; margin: 0 auto; }
+
+.cancel-link {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  margin-top: 16rpx;
+}
+
+/* === waiting === */
+.waiting { text-align: center; padding: 80rpx 32rpx; }
+.waiting-emoji {
+  font-size: 140rpx;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12rpx); }
+}
+.waiting-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 24rpx 0 12rpx;
+}
+.waiting-desc {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 32rpx;
+}
+
+/* === shake 动画（中毒时） === */
+.shake { animation: shake-anim 0.5s ease-in-out; }
+@keyframes shake-anim {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8rpx); }
+  75% { transform: translateX(8rpx); }
+}
+
+/* === result === */
+.outcome-banner {
+  padding: 48rpx 32rpx;
+  border-radius: 40rpx;
+  margin-bottom: 24rpx;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 12rpx 32rpx rgba(0, 0, 0, 0.15);
+}
+.outcome-banner.outcome-win {
+  background: linear-gradient(135deg, #6FE3CC, #4ECDC4);
+}
+.outcome-banner.outcome-lose {
+  background: linear-gradient(135deg, #7B4EB8, #FF6B8A);
+}
+.outcome-banner.outcome-draw {
+  background: linear-gradient(135deg, #C5A3E3, #9999D8);
+}
+.outcome-emoji { font-size: 140rpx; margin-bottom: 12rpx; }
+.outcome-text { font-size: 44rpx; font-weight: 700; }
+.outcome-reward { font-size: 28rpx; margin-top: 8rpx; opacity: 0.95; }
+
+.penalty-card {
+  background: linear-gradient(135deg, #FFE4EC, #E8D4F5);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 6rpx 20rpx rgba(155, 95, 214, 0.15);
+  border: 3rpx dashed var(--color-primary);
+}
+.penalty-label {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8rpx;
+}
+.penalty-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.grid-wrap { margin-bottom: 32rpx; }
+.reveal-title {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 12rpx;
+}

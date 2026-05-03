@@ -3,6 +3,7 @@
 module.exports = {
   truthDare: require('./games/truth-dare'),
   quiz: require('./games/quiz'),
-  rps: require('./games/rps')
+  rps: require('./games/rps'),
+  witch: require('./games/witch')
   // TODO: memory / who-knows / drawing / 1a2b / dice-truth
 }

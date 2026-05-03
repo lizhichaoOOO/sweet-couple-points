@@ -1,0 +1,147 @@
+<!--pages/games/witch/witch.wxml-->
+<view class="page">
+
+  <!-- loading -->
+  <view wx:if="{{state === 'loading'}}" class="loading">加载中...</view>
+
+  <!-- idle -->
+  <view wx:elif="{{state === 'idle'}}" class="section idle">
+    <view class="hero">
+      <view class="hero-emoji">🧙‍♀️🍓</view>
+      <view class="hero-title">女巫的毒药</view>
+      <view class="hero-desc">5×5 草莓格子，双方秘密下毒\n轮流吃，吃到对方的毒就输</view>
+    </view>
+
+    <view wx:if="{{lastResult}}" class="last-card">
+      <view class="last-label">上一局</view>
+      <view class="last-outcome outcome-{{lastResult.outcome}}">
+        {{lastResult.outcome === 'win' ? '🏆 你赢了 +5' : lastResult.outcome === 'lose' ? '💀 你中毒 -5' : '🤝 平局'}}
+      </view>
+      <view wx:if="{{lastResult.penalty}}" class="last-penalty">惩罚：{{lastResult.penalty}}</view>
+    </view>
+
+    <view class="rule-card">
+      <view class="rule-title">🎯 规则速查</view>
+      <view class="rule-item">• 双方各秘密选 1 颗草莓下毒</view>
+      <view class="rule-item">• 轮流吃草莓，吃到对方的毒 = 输</view>
+      <view class="rule-item">• 可以吃自己的毒（对自己无害）</view>
+      <view class="rule-item">• 胜方 +5 积分，败方 -5 积分 + 惩罚</view>
+    </view>
+
+    <button class="btn-primary start-btn" bindtap="onStart">开始新对局</button>
+  </view>
+
+  <!-- pick-my-poison：选毒 -->
+  <view wx:elif="{{state === 'pick-my-poison'}}" class="section">
+    <view class="stage-head">
+      <view class="stage-title">🧪 秘密下毒</view>
+      <view class="stage-sub">选一颗草莓下毒，对方不会看到</view>
+    </view>
+
+    <view class="grid">
+      <view
+        wx:for="{{cells}}"
+        wx:key="cell"
+        class="cell {{item.selected ? 'cell-poisoned' : ''}}"
+        data-cell="{{item.cell}}"
+        bindtap="selectPoison"
+      >
+        <text wx:if="{{item.selected}}" class="cell-emoji">☠️</text>
+        <text wx:else class="cell-emoji">🍓</text>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="confirmPoison" disabled="{{selectedPoison === null}}">
+      确认下毒
+    </button>
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- wait-partner-poison -->
+  <view wx:elif="{{state === 'wait-partner-poison'}}" class="section waiting">
+    <view class="waiting-emoji">⏳</view>
+    <view class="waiting-title">已下毒，等 TA 也下毒</view>
+    <view class="waiting-desc">把小程序发给 TA 一起玩吧</view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- playing：my-turn / partner-turn -->
+  <view wx:elif="{{state === 'my-turn' || state === 'partner-turn'}}" class="section {{poisonAnimating ? 'shake' : ''}}">
+    <view class="stage-head">
+      <view class="stage-title">
+        {{state === 'my-turn' ? '🍓 该你吃了' : '⌛ 等 TA 吃'}}
+      </view>
+      <view class="stage-sub">已吃 {{session.picked.length}}/{{session.gridSize}}</view>
+    </view>
+
+    <view class="grid">
+      <view
+        wx:for="{{cells}}"
+        wx:key="cell"
+        class="cell {{item.eaten ? 'cell-eaten' : ''}} {{item.myPoison && !item.eaten ? 'cell-my-poison' : ''}} {{state === 'my-turn' && !item.eaten ? 'cell-active' : ''}}"
+        data-cell="{{item.cell}}"
+        bindtap="eatCell"
+      >
+        <text wx:if="{{item.eaten}}" class="cell-emoji">
+          {{item.partnerPoison ? '💀' : '⬜'}}
+        </text>
+        <text wx:else class="cell-emoji">🍓</text>
+        <text wx:if="{{item.myPoison && !item.eaten}}" class="poison-mark">☠️</text>
+      </view>
+    </view>
+
+    <view class="legend">
+      <view class="legend-item">🍓 未吃</view>
+      <view class="legend-item">☠️ 我下毒的</view>
+      <view class="legend-item">⬜ 已吃（安全）</view>
+    </view>
+
+    <button wx:if="{{state === 'partner-turn'}}" class="btn-primary refresh-btn" bindtap="refresh">
+      刷新查看 TA 的动作
+    </button>
+  </view>
+
+  <!-- result -->
+  <view wx:elif="{{state === 'result'}}" class="section result">
+    <view class="outcome-banner outcome-{{result.outcome}}">
+      <view class="outcome-emoji">
+        {{result.outcome === 'win' ? '🏆' : result.outcome === 'lose' ? '💀' : '🤝'}}
+      </view>
+      <view class="outcome-text">
+        {{result.outcome === 'win' ? '你赢了！' : result.outcome === 'lose' ? 'TA 毒倒了你' : '平局'}}
+      </view>
+      <view wx:if="{{result.reward}}" class="outcome-reward">
+        {{result.outcome === 'win' ? '+' : '-'}}{{result.reward}} 积分
+      </view>
+    </view>
+
+    <view wx:if="{{result.penalty}}" class="penalty-card">
+      <view class="penalty-label">🎯 惩罚任务</view>
+      <view class="penalty-text">{{result.penalty}}</view>
+    </view>
+
+    <view class="grid-wrap">
+      <view class="reveal-title">最终格局</view>
+      <view class="grid">
+        <view
+          wx:for="{{cells}}"
+          wx:key="cell"
+          class="cell {{item.eaten ? 'cell-eaten' : ''}}"
+        >
+          <text wx:if="{{item.myPoison}}" class="cell-emoji big">☠️</text>
+          <text wx:elif="{{item.partnerPoison}}" class="cell-emoji big">💀</text>
+          <text wx:elif="{{item.eaten}}" class="cell-emoji">⬜</text>
+          <text wx:else class="cell-emoji">🍓</text>
+        </view>
+      </view>
+      <view class="legend">
+        <view class="legend-item">☠️ 我的毒</view>
+        <view class="legend-item">💀 TA 的毒</view>
+      </view>
+    </view>
+
+    <button class="btn-primary again-btn" bindtap="backToIdle">再来一局</button>
+  </view>
+
+</view>
