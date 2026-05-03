@@ -202,7 +202,7 @@ sweet-couple-points/
 2. 弹窗里填**集合名**（严格按下方的名称，**区分大小写**，不要加空格）
 3. 点 "**确定**"
 
-依次创建这 **17 个**：
+依次创建这 **19 个**：
 
 ```
 1.  users
@@ -222,9 +222,13 @@ sweet-couple-points/
 15. quizSessions
 16. rpsSessions
 17. witchSessions
+18. whoKnowsSessions
+19. drawingSessions
 ```
 
-完成后左侧集合列表应该列出全部 17 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
+完成后左侧集合列表应该列出全部 19 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
+
+**另外**：你画我猜游戏用到云存储（画作以图片形式上传），云开发环境默认已开通。权限保持"仅创建者可读写"即可，前端通过云函数发起上传时会自动具备权限。
 
 **4.3 （可选）创建关键索引**
 
@@ -569,6 +573,38 @@ sweet-couple-points/
 
 **索引建议**：`coupleId + status`（查找活跃）、`coupleId + closedAt desc`（历史）。
 
+### `whoKnowsSessions` — 谁更懂谁会话
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `_id` | string | |
+| `coupleId` | string | |
+| `startedBy` | string | |
+| `questions` | array | 6 道题 `{id, text, options[], subject}`；subject 是 openid，分别指向 A/B |
+| `answers` | object | `{ [openid]: number[] \| null }` |
+| `scoresByOpenid` | object | 结算后：`{ [openid]: 猜中数 }`（猜对方的题中猜对的数量） |
+| `status` | string | `waiting` / `closed` / `cancelled` |
+| `createdAt`, `updatedAt`, `closedAt` | date | |
+
+**评分规则**：题的 subject 是 A 就表示"这题问 A 本人"，A 本人如实作答、B 猜 A。若 B 的答案等于 A 的真实答案 → B 对 A 的了解 +1 题。每道猜中 = 猜对方的人 +3 积分。
+
+### `drawingSessions` — 你画我猜对局
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `_id` | string | |
+| `coupleId` | string | |
+| `drawer` | string | 画家 openid（= 发起人） |
+| `guesser` | string | 猜的人 openid |
+| `word` | string | 本局要画的词（只在 current 里返回给画家） |
+| `fileID` | string | 画作云存储 fileID（画家上传后填入） |
+| `guess` | string | 猜的人填的文字 |
+| `correct` | boolean | 判定结果 |
+| `status` | string | `drawing` / `guessing` / `judging` / `closed` / `cancelled` |
+| `createdAt`, `updatedAt`, `closedAt` | date | |
+
+**流程**：`drawing`（画家画）→ `guessing`（猜者填文字）→ 精确匹配 word 直接 `closed`；不匹配进 `judging` 由画家判 → `closed`。猜对双方各 +5 分。
+
+**云存储路径**：`drawings/{sessionId}_{timestamp}.png`（小程序通过 `wx.cloud.uploadFile` 上传）。
+
 ### 数据库权限
 
 **不依赖**数据库的读写权限（那是前端直连 DB 的模式），所有写入都走云函数、云函数以管理员身份操作 DB。在云开发控制台给每个集合设置"**仅创建者可读写**"即可，防止意外的前端直连。
@@ -652,6 +688,18 @@ const res = await api('points.adjust', { delta: 10, reason: '晚安打卡' })
 | games | `games.witch.pickCell` | 吃草莓（可能中毒结算） |
 | games | `games.witch.cancel` | 对方未下毒前可取消 |
 | games | `games.witch.history` | 最近 20 局对局 |
+| games | `games.whoKnows.start` | 开启谁更懂谁测试（6 题，subject 轮换） |
+| games | `games.whoKnows.current` | 查询当前测试状态 |
+| games | `games.whoKnows.submit` | 提交全部答案；双方都提交后自动结算 |
+| games | `games.whoKnows.cancel` | 对方未答前可取消 |
+| games | `games.whoKnows.history` | 最近 20 次 |
+| games | `games.drawing.start` | 开启你画我猜（发起者是画家，自动抽词） |
+| games | `games.drawing.current` | 根据身份返回不同视角 |
+| games | `games.drawing.submitDrawing` | 画家上传画作 fileID |
+| games | `games.drawing.submitGuess` | 猜方提交猜测（精确匹配直接判对） |
+| games | `games.drawing.judge` | 画家判定对错 |
+| games | `games.drawing.cancel` | 画家可取消（guessing 阶段前） |
+| games | `games.drawing.history` | 最近 20 局 |
 
 ---
 

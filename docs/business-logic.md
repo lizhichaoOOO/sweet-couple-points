@@ -513,10 +513,69 @@
 
 **冷静期兼容**：和 rps 一致，胜方 +5 不受阻，败方 -5 失败时吞错继续。
 
-### 待实现的 4 款游戏
-- memory / who_knows / drawing / number_1a2b / dice_truth
-- 遵循同样的 `lib/games/xxx.js` 模式
-- hub 卡片的 `ready: true` 控制是否可跳转
+### 已实现：谁更懂谁（5 个 action，需新集合 `whoKnowsSessions`）
+
+**代码路径**：`lib/games/who-knows.js` + `pages/games/who-knows/`
+
+**玩法**：从 24 道题库抽 6 道，3 道关于 A 3 道关于 B（subject 交错分配后打乱）。被问的人诚实作答，另一个人猜 TA 会答啥。
+
+**积分规则（非对称）**：
+- A 猜中关于 B 的题数 × 3 = A 获得的分
+- B 猜中关于 A 的题数 × 3 = B 获得的分
+- 最大每人 +9（3 题全中）
+
+**Action**：`start / current / submit / cancel / history`
+
+**评分逻辑**：
+```js
+questions.forEach((q, i) => {
+  if (q.subject === myOpenid) taKnowsMe += (partnerAns[i] === myAns[i] ? 1 : 0)
+  else meKnowsTa += (myAns[i] === partnerAns[i] ? 1 : 0)
+})
+```
+
+**前端 UI**：类似情侣默契测试，但每题上方会显示"这题问你自己（如实回答）"或"这题问 TA（猜 TA 会选什么）"，提示当前角色。
+
+### 已实现：你画我猜（7 个 action，需新集合 `drawingSessions` + 云存储）
+
+**代码路径**：`lib/games/drawing.js` + `pages/games/drawing/`
+
+**玩法**：发起人是画家，从 45 个词的词库随机抽一个 → 在 canvas 画板上画 → 上传云存储 → 对方看到图后输入文字猜测 → 画家判对错。
+
+**阶段流转**（对应 status）：
+```
+drawing → guessing → judging → closed
+  (画)       (猜)      (判)     (结算)
+```
+
+**快速路径**：如果猜测精确匹配 word 字符串，跳过 judging 直接 closed。
+
+**Action**：
+| Action | 说明 |
+|---|---|
+| `games.drawing.start` | 建局，抽词，startedBy 是画家 |
+| `games.drawing.current` | 基于身份返回不同视角（词只给画家）|
+| `games.drawing.submitDrawing` | 画家上传 fileID（canvas → 临时文件 → `wx.cloud.uploadFile`）|
+| `games.drawing.submitGuess` | 猜方提交文字；精确匹配时直接 closed |
+| `games.drawing.judge` | 画家判定 |
+| `games.drawing.cancel` | 画家可在 guessing 阶段前取消 |
+| `games.drawing.history` | 最近 20 局 |
+
+**积分**：猜对时画家和猜者**双方各 +5**（鼓励合作）。猜错 0 分。
+
+**前端 Canvas 要点**：
+- 用 `<canvas type="2d">`（新版 canvas API，性能比老 canvas 好）
+- `wx.createSelectorQuery().select('#id').fields({node:true,size:true})` 取到 node
+- 手写 `touchStart/Move/End` 事件组合画线
+- 提交时 `wx.canvasToTempFilePath` 导出 PNG → `wx.cloud.uploadFile` 上传 → 返回 `fileID`
+- 展示时 `<image src="{{fileID}}">` 直接渲染云存储图片
+
+### 已删除的 3 个占位
+- ~~memory 翻牌记忆~~（移除）
+- ~~number_1a2b 1A2B~~（移除）
+- ~~dice_truth 骰子惩罚~~（移除）
+
+目前 6 款游戏全部可玩，hub 不再有"敬请期待"项。
 
 ---
 - 检查 `wx.cloud` 是否可用（基础库 >= 2.2.3）

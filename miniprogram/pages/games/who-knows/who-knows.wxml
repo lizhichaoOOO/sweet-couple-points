@@ -1,0 +1,132 @@
+<!--pages/games/who-knows/who-knows.wxml-->
+<view class="page">
+  <view wx:if="{{state === 'loading'}}" class="loading">加载中...</view>
+
+  <!-- idle -->
+  <view wx:elif="{{state === 'idle'}}" class="section idle">
+    <view class="hero">
+      <view class="hero-emoji">🧐</view>
+      <view class="hero-title">谁更懂谁</view>
+      <view class="hero-desc">
+        6 道题，3 道关于我、3 道关于 TA\n被问的人诚实作答，另一个人猜 TA 会答啥\n每猜中 1 道，猜对的人 +3 分
+      </view>
+    </view>
+
+    <view wx:if="{{lastResult}}" class="last-card">
+      <view class="last-label">上次结果</view>
+      <view class="last-line">
+        <view class="last-col">
+          <view class="last-col-label">我懂 TA</view>
+          <view class="last-col-num">{{lastResult.myKnowsPartner}}/{{lastResult.myKnowsTotal}}</view>
+        </view>
+        <view class="last-col">
+          <view class="last-col-label">TA 懂我</view>
+          <view class="last-col-num">{{lastResult.partnerKnowsMe}}/{{lastResult.partnerKnowsMeTotal}}</view>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary start-btn" bindtap="onStart">开始新测试</button>
+  </view>
+
+  <!-- answering -->
+  <view wx:elif="{{state === 'answering'}}" class="section answer">
+    <view class="progress-bar">
+      <view class="progress-fill"
+            style="width: {{(currentIndex + 1) / questions.length * 100}}%">
+      </view>
+    </view>
+    <view class="progress-text">{{currentIndex + 1}} / {{questions.length}}</view>
+
+    <view class="q-card">
+      <view class="q-role">
+        {{questions[currentIndex].subject === myOpenid ? '这题问你自己（如实回答）' : '这题问 TA（猜 TA 会选什么）'}}
+      </view>
+      <view class="q-num">Q{{currentIndex + 1}}</view>
+      <view class="q-text">{{questions[currentIndex].text}}</view>
+      <view class="options">
+        <view
+          wx:for="{{questions[currentIndex].options}}"
+          wx:for-item="opt"
+          wx:for-index="oi"
+          wx:key="oi"
+          class="option {{answers[currentIndex] === oi ? 'option-active' : ''}}"
+          data-idx="{{currentIndex}}"
+          data-opt="{{oi}}"
+          bindtap="pickOption"
+        >
+          <view class="option-letter">{{['A', 'B', 'C', 'D'][oi]}}</view>
+          <view class="option-text">{{opt}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="nav-row">
+      <button class="nav-btn" bindtap="prev" disabled="{{currentIndex === 0}}">上一题</button>
+      <button wx:if="{{currentIndex < questions.length - 1}}" class="nav-btn" bindtap="next">下一题</button>
+      <button wx:else class="nav-btn submit" bindtap="submitAll" disabled="{{!canSubmit}}">提交答案</button>
+    </view>
+
+    <view class="dots">
+      <view wx:for="{{questions}}" wx:key="id"
+            class="dot {{answers[index] !== null ? 'dot-done' : ''}} {{currentIndex === index ? 'dot-current' : ''}}"
+            data-idx="{{index}}" bindtap="jumpTo"></view>
+    </view>
+
+    <view class="cancel-link" bindtap="cancelSession">取消本次测试</view>
+  </view>
+
+  <!-- waiting -->
+  <view wx:elif="{{state === 'waiting'}}" class="section waiting">
+    <view class="waiting-emoji">⏳</view>
+    <view class="waiting-title">已提交你的答案</view>
+    <view class="waiting-desc">等 TA 答完就自动算出谁更懂谁</view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+    <view class="cancel-link" bindtap="cancelSession">取消本次测试</view>
+  </view>
+
+  <!-- result -->
+  <view wx:elif="{{state === 'result'}}" class="section result">
+    <view class="result-hero">
+      <view class="winner-tag">
+        {{result.myKnowsPartner > result.partnerKnowsMe ? '🏆 你更懂 TA' : result.partnerKnowsMe > result.myKnowsPartner ? '💕 TA 更懂你' : '🤝 势均力敌'}}
+      </view>
+      <view class="score-pair">
+        <view class="score-block">
+          <view class="score-label">我懂 TA</view>
+          <view class="score-big">{{result.myKnowsPartner}}<text class="score-small">/{{result.myKnowsTotal}}</text></view>
+          <view wx:if="{{result.myReward}}" class="score-reward">+{{result.myReward}} 分</view>
+        </view>
+        <view class="score-block">
+          <view class="score-label">TA 懂我</view>
+          <view class="score-big">{{result.partnerKnowsMe}}<text class="score-small">/{{result.partnerKnowsMeTotal}}</text></view>
+          <view wx:if="{{result.partnerReward}}" class="score-reward">TA +{{result.partnerReward}} 分</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-list">
+      <view class="detail-title">逐题对比</view>
+      <view wx:for="{{result.details}}" wx:key="id"
+            class="detail-item {{item.match ? 'match' : 'miss'}}">
+        <view class="detail-head">
+          <text class="detail-role">{{item.subjectIsMe ? '问我' : '问 TA'}}</text>
+          <text class="detail-flag">{{item.match ? '✓ 猜对' : '✗ 没猜到'}}</text>
+        </view>
+        <view class="detail-q">{{item.text}}</view>
+        <view class="detail-ans">
+          <view class="ans-line">
+            <text class="ans-who">真实答案：</text>
+            <text class="ans-opt">{{['A','B','C','D'][item.truthAns]}}. {{item.options[item.truthAns]}}</text>
+          </view>
+          <view class="ans-line">
+            <text class="ans-who">{{item.subjectIsMe ? 'TA 的猜测' : '我的猜测'}}：</text>
+            <text class="ans-opt">{{['A','B','C','D'][item.guessAns]}}. {{item.options[item.guessAns]}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary again-btn" bindtap="backToIdle">再来一次</button>
+  </view>
+</view>

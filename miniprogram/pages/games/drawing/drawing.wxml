@@ -1,0 +1,135 @@
+<!--pages/games/drawing/drawing.wxml-->
+<view class="page">
+  <view wx:if="{{state === 'loading'}}" class="loading">加载中...</view>
+
+  <!-- idle -->
+  <view wx:elif="{{state === 'idle'}}" class="section idle">
+    <view class="hero">
+      <view class="hero-emoji">🎨</view>
+      <view class="hero-title">你画我猜</view>
+      <view class="hero-desc">
+        发起者是画家，抽一个词开画\n对方看画后输入猜测\n画家判对错；猜对双方各 +5 分
+      </view>
+    </view>
+    <view wx:if="{{lastResult}}" class="last-card">
+      <view class="last-label">上一局</view>
+      <view class="last-row">
+        <text class="last-key">词：</text>
+        <text class="last-val">{{lastResult.word}}</text>
+      </view>
+      <view class="last-row">
+        <text class="last-key">猜：</text>
+        <text class="last-val">{{lastResult.guess || '（未提交）'}}</text>
+      </view>
+      <view class="last-flag {{lastResult.correct ? 'ok' : 'no'}}">
+        {{lastResult.correct ? '✓ 猜对啦 双方 +5' : '✗ 没猜中'}}
+      </view>
+    </view>
+    <button class="btn-primary start-btn" bindtap="onStart">开始新对局（我画）</button>
+  </view>
+
+  <!-- draw-turn：画家画画 -->
+  <view wx:elif="{{state === 'draw-turn'}}" class="section draw">
+    <view class="word-card">
+      <view class="word-label">你要画的词</view>
+      <view class="word-text">{{session.word}}</view>
+      <view class="word-hint">不要被 TA 看到哦</view>
+    </view>
+    <view class="canvas-wrap">
+      <canvas
+        type="2d"
+        id="drawBoard"
+        class="canvas"
+        bindtouchstart="touchStart"
+        bindtouchmove="touchMove"
+        bindtouchend="touchEnd"
+      ></canvas>
+    </view>
+    <view class="canvas-tools">
+      <button class="tool-btn" bindtap="clearCanvas">重新画</button>
+      <button class="tool-btn primary" bindtap="submitDrawing">提交画作</button>
+    </view>
+    <view class="cancel-link" bindtap="cancelSession">取消本局</view>
+  </view>
+
+  <!-- waiting-draw：我是猜的人，等 TA 画 -->
+  <view wx:elif="{{state === 'waiting-draw'}}" class="section waiting">
+    <view class="waiting-emoji">🖌️</view>
+    <view class="waiting-title">TA 正在画</view>
+    <view class="waiting-desc">画好就会通知你来猜</view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新看看</button>
+  </view>
+
+  <!-- guess-turn：猜词 -->
+  <view wx:elif="{{state === 'guess-turn'}}" class="section guess">
+    <view class="guess-title">🖼 这是 TA 画的，你猜是啥？</view>
+    <view class="drawing-view">
+      <image wx:if="{{session.fileID}}" class="drawing-img" src="{{session.fileID}}" mode="aspectFit" />
+    </view>
+    <view class="guess-input-row">
+      <input
+        class="guess-input"
+        placeholder="输入你的猜测"
+        value="{{guessInput}}"
+        bindinput="onGuessInput"
+        confirm-type="send"
+        bindconfirm="submitGuess"
+      />
+      <button class="tool-btn primary" bindtap="submitGuess">提交</button>
+    </view>
+  </view>
+
+  <!-- waiting-guess：我是画家，等 TA 猜 -->
+  <view wx:elif="{{state === 'waiting-guess'}}" class="section waiting">
+    <view class="waiting-emoji">⏳</view>
+    <view class="waiting-title">等 TA 猜</view>
+    <view class="waiting-desc">你画的词是「{{session.word}}」</view>
+    <view wx:if="{{session.fileID}}" class="small-drawing">
+      <image class="drawing-img" src="{{session.fileID}}" mode="aspectFit" />
+    </view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+  </view>
+
+  <!-- judge-turn：画家判定 TA 猜的对不对 -->
+  <view wx:elif="{{state === 'judge-turn'}}" class="section judge">
+    <view class="judge-title">TA 猜的是：</view>
+    <view class="judge-guess">「{{session.guess}}」</view>
+    <view class="judge-word">正确答案：「{{session.word}}」</view>
+    <view class="judge-tip">猜的是不是一回事？由你判定</view>
+    <view class="judge-buttons">
+      <button class="judge-btn right" bindtap="judgeTrue">✓ 算猜对</button>
+      <button class="judge-btn wrong" bindtap="judgeFalse">✗ 不对</button>
+    </view>
+  </view>
+
+  <!-- waiting-judge：我是猜的人，等画家判 -->
+  <view wx:elif="{{state === 'waiting-judge'}}" class="section waiting">
+    <view class="waiting-emoji">⚖️</view>
+    <view class="waiting-title">等 TA 判定</view>
+    <view class="waiting-desc">你猜的是「{{session.guess}}」</view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+  </view>
+
+  <!-- result -->
+  <view wx:elif="{{state === 'result'}}" class="section result">
+    <view class="outcome-banner {{result.correct ? 'ok' : 'no'}}">
+      <view class="outcome-emoji">{{result.correct ? '🎉' : '😅'}}</view>
+      <view class="outcome-text">{{result.correct ? '猜对啦！' : '没猜中'}}</view>
+      <view wx:if="{{result.reward}}" class="outcome-reward">双方各 +{{result.reward}} 分</view>
+    </view>
+    <view class="reveal-card">
+      <view class="reveal-row">
+        <text class="reveal-key">🎯 正确词：</text>
+        <text class="reveal-val">{{result.word}}</text>
+      </view>
+      <view class="reveal-row">
+        <text class="reveal-key">💭 {{result.iWasDrawer ? 'TA 猜的' : '我猜的'}}：</text>
+        <text class="reveal-val">{{result.guess || '（未提交）'}}</text>
+      </view>
+    </view>
+    <view wx:if="{{result.fileID}}" class="result-drawing">
+      <image class="drawing-img" src="{{result.fileID}}" mode="aspectFit" />
+    </view>
+    <button class="btn-primary again-btn" bindtap="backToIdle">再来一局</button>
+  </view>
+</view>
