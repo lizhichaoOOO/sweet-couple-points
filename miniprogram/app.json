@@ -15,7 +15,8 @@
     "pages/lucky-draw/lucky-draw",
     "pages/cooldown/cooldown",
     "pages/games/games",
-    "pages/games/truth-dare/truth-dare"
+    "pages/games/truth-dare/truth-dare",
+    "pages/games/quiz/quiz"
   ],
   "window": {
     "backgroundTextStyle": "light",

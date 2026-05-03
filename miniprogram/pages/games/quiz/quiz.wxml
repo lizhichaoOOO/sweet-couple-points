@@ -1,0 +1,145 @@
+<!--pages/games/quiz/quiz.wxml-->
+<view class="page">
+
+  <!-- loading -->
+  <view wx:if="{{state === 'loading'}}" class="loading">加载中...</view>
+
+  <!-- idle：没有进行中的测试 -->
+  <view wx:elif="{{state === 'idle'}}" class="section idle">
+    <view class="idle-hero">
+      <view class="hero-emoji">💑</view>
+      <view class="hero-title">情侣默契测试</view>
+      <view class="hero-desc">
+        10 道题，双方独立作答\n答案一致即"默契"\n8 题以上 · 双方各 +15 分
+      </view>
+    </view>
+
+    <!-- 上次结果（如果有） -->
+    <view wx:if="{{lastResult}}" class="last-card">
+      <view class="last-title">上次测试结果</view>
+      <view class="last-score">{{lastResult.matchCount}}<text class="last-total">/{{lastResult.total}}</text></view>
+      <view class="last-label">默契</view>
+      <view class="last-reward" wx:if="{{lastResult.reward}}">双方 +{{lastResult.reward}} 分</view>
+    </view>
+
+    <button class="btn-primary start-btn" bindtap="onStart">开始新测试</button>
+  </view>
+
+  <!-- answering：答题中 -->
+  <view wx:elif="{{state === 'answering'}}" class="section answer">
+    <!-- 进度条 -->
+    <view class="progress-bar">
+      <view
+        class="progress-fill"
+        style="width: {{(currentIndex + 1) / questions.length * 100}}%"
+      ></view>
+    </view>
+    <view class="progress-text">{{currentIndex + 1}} / {{questions.length}}</view>
+
+    <!-- 当前题卡片 -->
+    <view class="q-card">
+      <view class="q-num">Q{{currentIndex + 1}}</view>
+      <view class="q-text">{{questions[currentIndex].text}}</view>
+      <view class="options">
+        <view
+          wx:for="{{questions[currentIndex].options}}"
+          wx:for-item="opt"
+          wx:for-index="oi"
+          wx:key="oi"
+          class="option {{answers[currentIndex] === oi ? 'option-active' : ''}}"
+          data-idx="{{currentIndex}}"
+          data-opt="{{oi}}"
+          bindtap="pickOption"
+        >
+          <view class="option-letter">{{['A', 'B', 'C', 'D'][oi]}}</view>
+          <view class="option-text">{{opt}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 导航 -->
+    <view class="nav-row">
+      <button
+        class="nav-btn"
+        bindtap="prevQuestion"
+        disabled="{{currentIndex === 0}}"
+      >上一题</button>
+      <button
+        wx:if="{{currentIndex < questions.length - 1}}"
+        class="nav-btn"
+        bindtap="nextQuestion"
+      >下一题</button>
+      <button
+        wx:else
+        class="nav-btn submit"
+        bindtap="submitAll"
+        disabled="{{!canSubmit}}"
+      >提交答案</button>
+    </view>
+
+    <!-- 题号导航 -->
+    <view class="dots">
+      <view
+        wx:for="{{questions}}"
+        wx:key="id"
+        class="dot {{answers[index] !== null ? 'dot-done' : ''}} {{currentIndex === index ? 'dot-current' : ''}}"
+        data-idx="{{index}}"
+        bindtap="jumpTo"
+      ></view>
+    </view>
+
+    <view class="cancel-hint" bindtap="cancelSession">取消本次测试</view>
+  </view>
+
+  <!-- waiting：等待对方 -->
+  <view wx:elif="{{state === 'waiting'}}" class="section waiting">
+    <view class="waiting-emoji">⏳</view>
+    <view class="waiting-title">已提交你的答案</view>
+    <view class="waiting-desc">把小程序发给 TA 一起答吧\nTA 答完就会自动算出你们的默契度</view>
+    <button class="btn-primary refresh-btn" bindtap="refresh">刷新查看</button>
+    <view class="cancel-hint" bindtap="cancelSession">取消本次测试</view>
+  </view>
+
+  <!-- result：结果 -->
+  <view wx:elif="{{state === 'result'}}" class="section result">
+    <view class="score-ring">
+      <view class="score-num">{{result.matchCount}}</view>
+      <view class="score-total">/ {{result.total}}</view>
+      <view class="score-label">默契</view>
+    </view>
+    <view class="score-comment">
+      {{result.matchCount >= 8 ? '简直是灵魂伴侣！🎉' : result.matchCount >= 5 ? '还不错，继续了解吧 ❤️' : '要多花点时间了解对方哦'}}
+    </view>
+    <view wx:if="{{result.reward}}" class="reward-banner">
+      本次双方各获得 +{{result.reward}} 积分
+    </view>
+
+    <view class="detail-list">
+      <view class="detail-title">逐题对比</view>
+      <view
+        wx:for="{{result.details}}"
+        wx:key="id"
+        class="detail-item {{item.match ? 'match' : 'miss'}}"
+      >
+        <view class="detail-head">
+          <text class="detail-num">Q{{index + 1}}</text>
+          <text class="detail-flag">{{item.match ? '✓ 默契' : '✗ 有分歧'}}</text>
+        </view>
+        <view class="detail-q">{{item.text}}</view>
+        <view class="detail-ans">
+          <view class="ans-line">
+            <text class="ans-who">我：</text>
+            <text class="ans-opt">{{['A', 'B', 'C', 'D'][item.mine]}}. {{item.options[item.mine]}}</text>
+          </view>
+          <view class="ans-line">
+            <text class="ans-who">TA：</text>
+            <text class="ans-opt">{{['A', 'B', 'C', 'D'][item.partner]}}. {{item.options[item.partner]}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary again-btn" bindtap="backToIdle">再来一次</button>
+  </view>
+
+</view>

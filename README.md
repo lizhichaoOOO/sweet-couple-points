@@ -202,7 +202,7 @@ sweet-couple-points/
 2. 弹窗里填**集合名**（严格按下方的名称，**区分大小写**，不要加空格）
 3. 点 "**确定**"
 
-依次创建这 **14 个**：
+依次创建这 **15 个**：
 
 ```
 1.  users
@@ -219,9 +219,10 @@ sweet-couple-points/
 12. cooldowns
 13. punishments
 14. luckyDraws
+15. quizSessions
 ```
 
-完成后左侧集合列表应该列出全部 14 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
+完成后左侧集合列表应该列出全部 15 个。每个都是空的（0 条记录）——**这是正确的**，之后小程序运行时会自动写入。
 
 **4.3 （可选）创建关键索引**
 
@@ -511,6 +512,21 @@ sweet-couple-points/
 | `bonus` | number | 附带积分红利 |
 | `cost` | number | 消耗积分（默认 20） |
 
+### `quizSessions` — 情侣默契测试会话
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `_id` | string | |
+| `coupleId` | string | |
+| `startedBy` | string | 发起人 openid |
+| `questions` | array | 本次抽到的 10 道题 snapshot `{id, text, options[]}` |
+| `answers` | object | `{ [openid]: number[] \| null }` 各自的答案索引数组 |
+| `status` | string | `waiting` / `closed` / `cancelled` |
+| `matchCount` | number | 答案一致的题数（closed 后才有） |
+| `total`, `reward` | number | 总题数、双方获得的奖励分 |
+| `createdAt`, `updatedAt`, `closedAt`, `cancelledAt` | date | |
+
+**索引建议**：`coupleId + status`（查找活跃会话）、`coupleId + closedAt desc`（历史）。
+
 ### 数据库权限
 
 **不依赖**数据库的读写权限（那是前端直连 DB 的模式），所有写入都走云函数、云函数以管理员身份操作 DB。在云开发控制台给每个集合设置"**仅创建者可读写**"即可，防止意外的前端直连。
@@ -576,6 +592,11 @@ const res = await api('points.adjust', { delta: 10, reason: '晚安打卡' })
 | games | `games.truthDare.draw` | 真心话大冒险抽题 |
 | games | `games.truthDare.submit` | 提交结果（完成 +2 / 拒绝 -10） |
 | games | `games.truthDare.stats` | 题库容量统计 |
+| games | `games.quiz.start` | 开启情侣默契测试会话（抽 10 题） |
+| games | `games.quiz.current` | 查询当前进行中的测试状态 |
+| games | `games.quiz.submit` | 提交本人 10 题答案（双方都提交后自动结算） |
+| games | `games.quiz.cancel` | 发起人可在对方未答前取消 |
+| games | `games.quiz.history` | 最近 20 次测试结果 |
 
 ---
 

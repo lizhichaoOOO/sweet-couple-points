@@ -385,10 +385,56 @@
 - showing 状态：完成 / 拒绝 / 换一题 / 取消
 - 本次完成数和拒绝数实时统计
 
-### 待实现的 7 款游戏
-- couple_quiz / rps / memory / who_knows / drawing / number_1a2b / dice_truth
-- 每款游戏对应一个 `lib/games/xxx.js`，遵循 `draw + submit` 模式
+### 待实现的 6 款游戏
+- rps / memory / who_knows / drawing / number_1a2b / dice_truth
+- 每款游戏对应一个 `lib/games/xxx.js`，遵循 `draw + submit` 或 `session` 模式
 - hub 卡片的 `ready: true` 标记控制是否可以跳转
+
+---
+
+### 已实现：情侣默契测试（5 个 action，需新集合 `quizSessions`）
+
+**代码路径**：`lib/games/quiz.js` + `pages/games/quiz/`
+
+**题库**（30 道四选一，写在云函数里）：
+涵盖周末安排、冲突处理、旅行方式、金钱观、表达方式、理想生活、家人相处等 2025 情侣共同决策场景。每次抽 10 道随机不重复出题。
+
+**玩法流程**（异步会话）：
+1. 一方点"开始新测试" → 建 session，snapshot 10 题
+2. 自己答完 10 题 → `status: waiting` + `answers[me] = [...]`
+3. 对方进入页面会自动看到待答 session，答完后 → 触发结算
+4. 双方答案逐题比对，一致数 = 默契分
+
+**积分奖励**（双方等量）：
+- `>= 8/10` 默契 → 各 **+15 分**
+- `5-7/10` → 各 **+5 分**
+- `< 5/10` → **0 分**
+
+**Action**：
+| Action | 说明 |
+|---|---|
+| `games.quiz.start` | 开启新会话（已有活跃 session 时幂等返回） |
+| `games.quiz.current` | 返回 `{state: 'none' \| 'mine-pending' \| 'partner-pending', session?, lastResult?}` |
+| `games.quiz.submit` | 提交本人答案。若对方已提交则触发结算 |
+| `games.quiz.cancel` | 发起人可在对方未答前取消（cancelled 状态） |
+| `games.quiz.history` | 最近 20 次已关闭的测试 |
+
+**关键校验**：
+- `submit`：answers 数量必须等于题数，每个元素是 0-3 的整数
+- `submit`：本人不能重复提交
+- 同一情侣同时只能有一个 waiting session（`start` 会幂等返回已存在的）
+- `cancel`：对方已答后不可取消
+
+**前端交互**：
+- 4 种状态：`idle / answering / waiting / result`
+- 单题推进 + 进度条 + 题号圆点导航
+- 答题自动跳下一题；所有题答完才能点提交
+- 结果页：分数圆环 + 感性文案 + 奖励横幅 + 逐题对比（绿/红边）
+
+### 待实现的 6 款游戏
+- rps / memory / who_knows / drawing / number_1a2b / dice_truth
+- 遵循同样的 `lib/games/xxx.js` 模式
+- hub 卡片的 `ready: true` 控制是否可跳转
 
 ---
 - 检查 `wx.cloud` 是否可用（基础库 >= 2.2.3）
